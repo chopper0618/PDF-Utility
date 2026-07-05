@@ -1,0 +1,93 @@
+.app-shell {
+  display: grid;
+  grid-template-rows: 40px 32px 72px 1fr 28px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.title-bar,
+.menu-bar,
+.ribbon,
+.status-bar {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.title-bar {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-4);
+}
+
+.title-bar__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 700;
+}
+
+.app-version {
+  color: var(--color-muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.menu-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0 var(--space-3);
+}
+
+.ribbon {
+  display: flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: 240px 1fr 280px;
+  min-height: 0;
+}
+
+.panel {
+  min-width: 0;
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  overflow: auto;
+}
+
+.properties {
+  border-right: none;
+  border-left: 1px solid var(--color-border);
+}
+
+.canvas {
+  display: grid;
+  grid-template-rows: 44px 1fr;
+  min-width: 0;
+  background: var(--color-bg);
+  overflow: hidden;
+}
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--space-3);
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+/* v0.4 Professional UX */
+.app-shell {
+  grid-template-rows: 40px 32px 96px 1fr 28px;
+}
+
+.ribbon {
+  align-items: stretch;
+  gap: var(--space-2);
+  overflow-x: auto;
+  background: var(--color-toolbar-bg);
+}
