@@ -90,6 +90,27 @@ function getActions(context) {
         disabled: !hasSelection,
         danger: true,
       },
+      {
+        id: 'move-to-page',
+        icon: 'drive_file_move',
+        label: '移動...',
+        hint: '選択ページを指定したページ番号へ移動します',
+        disabled: !hasSelection,
+      },
+      {
+        id: 'move-start',
+        icon: 'vertical_align_top',
+        label: '先頭へ',
+        hint: '選択ページを先頭へ移動します',
+        disabled: !hasSelection,
+      },
+      {
+        id: 'move-end',
+        icon: 'vertical_align_bottom',
+        label: '末尾へ',
+        hint: '選択ページを末尾へ移動します',
+        disabled: !hasSelection,
+      },
     ],
     view: [
       {
@@ -141,6 +162,15 @@ function runAction(context, actionId, input) {
       break;
     case 'delete':
       context.actions.deleteSelected();
+      break;
+    case 'move-to-page':
+      context.actions.promptMoveSelectedToPage();
+      break;
+    case 'move-start':
+      context.actions.moveSelectedToEdge('start');
+      break;
+    case 'move-end':
+      context.actions.moveSelectedToEdge('end');
       break;
     case 'zoom-out':
       context.actions.setZoom(context.state.zoom - 20);
