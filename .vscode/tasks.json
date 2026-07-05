@@ -1,0 +1,26 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start Dev Server",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-lc",
+        "source ~/.nvm/nvm.sh && nvm use 22 && npm run dev"
+      ],
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Install Packages",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-lc",
+        "source ~/.nvm/nvm.sh && nvm use 22 && npm install"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}

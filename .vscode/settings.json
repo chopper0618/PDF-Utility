@@ -1,8 +1,29 @@
 {
-  "editor.formatOnSave": true,
-  "editor.tabSize": 2,
-  "editor.wordWrap": "on",
   "files.autoSave": "afterDelay",
-  "files.autoSaveDelay": 1000,
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "files.autoSaveDelay": 500,
+
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  "editor.wordWrap": "on",
+  "editor.fontSize": 14,
+  "editor.tabSize": 2,
+
+  "editor.minimap.enabled": false,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.indentation": true,
+
+  "explorer.compactFolders": false,
+  "explorer.confirmDelete": true,
+
+  "git.autofetch": true,
+  "git.confirmSync": false,
+
+  "terminal.integrated.defaultProfile.osx": "zsh",
+
+  "workbench.startupEditor": "none",
+
+  "files.exclude": {
+    "**/.DS_Store": true
+  }
 }

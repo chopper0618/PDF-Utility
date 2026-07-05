@@ -2,7 +2,7 @@
   "recommendations": [
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
-    "usernamehw.errorlens",
-    "pkief.material-icon-theme"
+    "eamodio.gitlens",
+    "PKief.material-icon-theme"
   ]
 }

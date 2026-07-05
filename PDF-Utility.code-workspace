@@ -1,0 +1,23 @@
+{
+  "folders": [
+    {
+      "path": "/Users/tomo/Projects/PDF-Utility"
+    }
+  ],
+  "settings": {
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 500,
+    "editor.formatOnSave": true,
+    "editor.wordWrap": "on",
+    "editor.minimap.enabled": false,
+    "git.autofetch": true
+  },
+  "extensions": {
+    "recommendations": [
+      "esbenp.prettier-vscode",
+      "dbaeumer.vscode-eslint",
+      "eamodio.gitlens",
+      "PKief.material-icon-theme"
+    ]
+  }
+}
