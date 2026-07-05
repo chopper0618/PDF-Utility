@@ -1,13 +1,21 @@
 ---
 name: Feature request
-about: Suggest a feature for PDF Utility
-title: '[Feature] '
+about: 機能追加・改善提案
+title: "[Feature]: "
 labels: enhancement
-assignees: ''
+assignees: ""
 ---
 
-## Summary
+## 概要
 
-## Why is this useful?
+## 解決したい課題
 
-## Notes
+## 提案する仕様
+
+## 優先度
+
+- [ ] 高
+- [ ] 中
+- [ ] 低
+
+## 補足
