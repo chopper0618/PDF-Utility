@@ -19,7 +19,7 @@ function getActions(context) {
       { id: 'delete', icon: 'delete', label: '削除', hint: '選択ページを削除', disabled: !hasSelection, danger: true },
     ],
     output: [
-      { id: 'export-pdf', icon: 'download', label: 'PDF作成', hint: 'PDF出力（未実装）', disabled: true, primary: true },
+      { id: 'export-pdf', icon: 'download', label: 'PDF作成', hint: '現在のページ順でPDFを作成', disabled: !hasPages, primary: true },
     ],
   };
 }
@@ -52,6 +52,9 @@ function runAction(context, actionId, input) {
       break;
     case 'delete':
       context.actions.deleteSelected();
+      break;
+    case 'export-pdf':
+      context.actions.exportPdf();
       break;
     default:
       break;

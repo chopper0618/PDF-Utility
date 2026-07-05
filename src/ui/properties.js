@@ -93,10 +93,14 @@ export function renderProperties(root, context) {
           <strong>元画質</strong>
         </div>
       </div>
-      <button class="primary-button" disabled>
+      <button class="primary-button" data-action="export-pdf" ${context.state.pages.length === 0 ? 'disabled' : ''}>
         <span class="material-symbols-outlined" aria-hidden="true">download</span>
         PDF作成
       </button>
     </div>
   `;
+
+  root.querySelector('[data-action="export-pdf"]')?.addEventListener('click', () => {
+    context.actions.exportPdf();
+  });
 }

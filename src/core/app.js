@@ -3,6 +3,7 @@ import { createEventBus } from './eventBus.js';
 import { renderShell } from '../ui/shell.js';
 import { loadPdfFile } from '../pdf/loader.js';
 import { renderPageThumbnail } from '../pdf/thumbnail.js';
+import { createMergedPdfBlob, downloadBlob, getSuggestedOutputFileName } from '../pdf/export.js';
 
 function createId(prefix) {
   return `${prefix}-${crypto.randomUUID()}`;
@@ -141,6 +142,7 @@ export function createApp(root) {
           byteLength: loaded.byteLength,
           loadedAt: new Date().toISOString(),
           pdfDocument: loaded.document,
+          originalBytes: loaded.originalBytes,
         };
 
         context.state.files.push(fileRecord);
@@ -285,6 +287,37 @@ export function createApp(root) {
     context.state.history.undo.push(snapshot(context.state));
     restoreSnapshot(context.state, snap);
     setStatus(context, 'やり直しました。');
+  };
+
+
+
+  context.actions.exportPdf = async () => {
+    if (context.state.pages.length === 0) {
+      setStatus(context, '出力するページがありません。');
+      return;
+    }
+
+    const suggestedName = getSuggestedOutputFileName(context.state);
+    const inputName = window.prompt('出力ファイル名を入力してください。', suggestedName);
+    if (inputName === null) {
+      setStatus(context, 'PDF作成をキャンセルしました。');
+      return;
+    }
+
+    context.state.isLoading = true;
+    setStatus(context, 'PDFを作成中...');
+
+    try {
+      const blob = await createMergedPdfBlob(context.state);
+      downloadBlob(blob, inputName);
+      setStatus(context, `PDFを作成しました: ${context.state.pages.length}ページ`);
+    } catch (error) {
+      console.error(error);
+      setStatus(context, `PDF作成エラー: ${error.message}`);
+    } finally {
+      context.state.isLoading = false;
+      requestRender(eventBus);
+    }
   };
 
   context.actions.openContextMenu = (pageId, x, y) => {

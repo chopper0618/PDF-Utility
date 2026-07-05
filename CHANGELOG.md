@@ -1,31 +1,16 @@
 # Changelog
 
+## v0.5.0-alpha
+
+- Added PDF export using current page order.
+- Export reflects page rotation, deleted pages, duplicated pages, and reordered pages.
+- Enabled PDF作成 button in ribbon and properties panel.
+- Added suggested output file names.
+
+## v0.4.5-alpha
+
+- Fixed ribbon labels for PDF追加 and PDF作成.
+
 ## v0.4.4-alpha
 
-### Changed
-- ページドラッグ時に移動先を縦線で表示するように改善
-- 右プロパティパネルの文字サイズと余白を調整し、スクロールなしで見やすい密度へ変更
-
-### Notes
-- ホバー時操作ボタンは、サムネイルにマウスを乗せた時に右上へ表示されるページ操作ボタンを指します。
-
-## v0.4.4-alpha
-
-### Added
-- Office風リボングループを追加
-- サムネイルカードにページ番号バッジを追加
-- 複製ページのタグ表示を追加
-- サムネイル操作ボタンをホバー表示の丸型アイコンへ改善
-- 読み込み中カードを追加
-- プロパティパネルを「選択」「ページ」「履歴」「出力」に整理
-- ページ向き表示を追加
-
-### Changed
-- サムネイルグリッドの表示密度を改善
-- 選択状態・ホバー状態・ドロップ先表示を改善
-- ボタンの視認性とツールチップを改善
-- バージョンを v0.4.4-alpha に更新
-
-### Notes
-- PDF出力は次Sprint以降で実装予定です。
-- 本Sprintは機能追加より操作感と見た目の改善を目的としています。
+- Improved hover controls and thumbnail zoom behavior.

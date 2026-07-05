@@ -5,11 +5,12 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
 
 export async function loadPdfFile(file) {
   const arrayBuffer = await file.arrayBuffer();
-  const data = new Uint8Array(arrayBuffer);
-  const document = await pdfjsLib.getDocument({ data }).promise;
+  const pdfjsData = new Uint8Array(arrayBuffer.slice(0));
+  const document = await pdfjsLib.getDocument({ data: pdfjsData }).promise;
 
   return {
     document,
+    originalBytes: arrayBuffer,
     pageCount: document.numPages,
     byteLength: file.size,
   };
