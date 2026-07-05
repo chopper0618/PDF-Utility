@@ -1,4 +1,30 @@
-function renderThumbnail(page, index) {
+
+function normalizeRotation(rotation) {
+  return ((Number(rotation) % 360) + 360) % 360;
+}
+
+function getThumbnailImageStyle(page, zoom) {
+  const rotation = normalizeRotation(page.rotation);
+  const pageWidth = Math.max(1, Number(page.width) || 1);
+  const pageHeight = Math.max(1, Number(page.height) || 1);
+  const availableSize = Math.max(72, Number(zoom) - 16);
+  const isSideways = rotation === 90 || rotation === 270;
+
+  const fitScale = isSideways
+    ? Math.min(availableSize / pageHeight, availableSize / pageWidth)
+    : Math.min(availableSize / pageWidth, availableSize / pageHeight);
+
+  const displayWidth = Math.max(1, Math.floor(pageWidth * fitScale));
+  const displayHeight = Math.max(1, Math.floor(pageHeight * fitScale));
+
+  return [
+    `width: ${displayWidth}px`,
+    `height: ${displayHeight}px`,
+    `transform: rotate(${rotation}deg)`,
+  ].join('; ');
+}
+
+function renderThumbnail(page, index, zoom) {
   const duplicateLabel = page.duplicateOf ? '<span class="thumbnail-card__tag">複製</span>' : '';
   return `
     <article class="thumbnail-card ${page.selected ? 'thumbnail-card--selected' : ''}" draggable="true" tabindex="0" data-page-id="${page.id}">
@@ -21,7 +47,7 @@ function renderThumbnail(page, index) {
         </button>
       </div>
       <div class="thumbnail-card__image-wrap">
-        <img style="transform: rotate(${page.rotation}deg)" src="${page.thumbnailUrl}" alt="${page.fileName} P.${page.originalPageNumber}" />
+        <img class="thumbnail-card__image" style="${getThumbnailImageStyle(page, zoom)}" src="${page.thumbnailUrl}" alt="${page.fileName} P.${page.originalPageNumber}" />
       </div>
       <div class="thumbnail-card__meta">
         <span class="thumbnail-card__file" title="${page.fileName}">${page.fileName}</span>
@@ -98,10 +124,10 @@ export function renderCanvas(root, context) {
                 <span class="material-symbols-outlined welcome-card__icon" aria-hidden="true">picture_as_pdf</span>
                 <h1>PDF Utility</h1>
                 <p>PDFを追加して、ページの整理・結合・出力を行います。</p>
-                <p class="muted">v0.4.4-alphaではホバーUIとサムネイル拡大表示を改善しました。</p>
+                <p class="muted">v0.4.3-alphaではホバー操作・選択表示・サムネイルサイズ変更を改善しました。</p>
               </div>`
             : `<div class="thumbnail-grid">
-                ${pages.map((page, index) => renderThumbnail(page, index)).join('')}
+                ${pages.map((page, index) => renderThumbnail(page, index, context.state.zoom)).join('')}
               </div>`
       }
     </div>

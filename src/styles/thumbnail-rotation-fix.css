@@ -1,0 +1,27 @@
+/* Sprint 0.6.3 Thumbnail rotation fix */
+.thumbnail-card__image-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: var(--thumbnail-image-height);
+  min-height: var(--thumbnail-image-height);
+  padding: 8px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.thumbnail-card__image {
+  display: block;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: contain;
+  background: white;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+  transform-origin: center center;
+  transition:
+    transform 160ms ease,
+    width 160ms ease,
+    height 160ms ease;
+}
