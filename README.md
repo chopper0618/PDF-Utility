@@ -4,8 +4,8 @@ A modern PDF editing utility designed to make everyday PDF work in hospitals fas
 
 ## Status
 
-Current version: `v0.7.2-alpha`  
-Current sprint: `Sprint 0.7.2 review`  
+Current version: `v0.7.3-alpha`  
+Current sprint: `Sprint 0.7.3 review`  
 Main branch: `main`  
 Development branch: `develop`
 
@@ -20,6 +20,7 @@ Implemented:
 - Page reorder
 - Page Map navigation
 - Compact Page Map file labels
+- Compact thumbnail file labels
 - Drag auto-scroll during reorder
 - Move selected pages to a specified page number
 - Page rotate

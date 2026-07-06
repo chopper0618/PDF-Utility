@@ -1,35 +1,8 @@
-function escapeHtml(value) {
-  return String(value ?? '')
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;');
-}
-
-function shortenFileNameForPageMap(fileName, maxLength = 20) {
-  const name = String(fileName ?? '');
-  if (Array.from(name).length <= maxLength) return name;
-
-  const chars = Array.from(name);
-  const extensionMatch = name.match(/(\.[^.]{1,8})$/u);
-  const extension = extensionMatch ? extensionMatch[1] : '';
-  const extensionLength = Array.from(extension).length;
-
-  const headLength = 7;
-  const tailLength = Math.max(8, maxLength - headLength - 1);
-  const tailStart = Math.max(headLength, chars.length - Math.max(tailLength, extensionLength + 4));
-
-  return `${chars.slice(0, headLength).join('')}…${chars.slice(tailStart).join('')}`;
-}
+import { escapeHtml, renderShortFileName } from './fileName.js';
 
 function renderPageMapFileName(fileName) {
-  const title = escapeHtml(fileName);
-  const label = shortenFileNameForPageMap(fileName);
-
-  return `<span class="page-map__file" title="${title}">${escapeHtml(label)}</span>`;
+  return renderShortFileName(fileName, 'page-map__file', 18);
 }
-
 function renderPageMapItem(page, index, selectedPageId) {
   const isActive = page.id === selectedPageId;
   const duplicateLabel = page.duplicateOf ? '<span class="page-map__badge">複製</span>' : '';

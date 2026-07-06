@@ -1,3 +1,5 @@
+import { escapeHtml, renderShortFileName } from './fileName.js';
+
 
 function normalizeRotation(rotation) {
   return ((Number(rotation) % 360) + 360) % 360;
@@ -27,7 +29,7 @@ function getThumbnailImageStyle(page, zoom) {
 function renderThumbnail(page, index, zoom) {
   const duplicateLabel = page.duplicateOf ? '<span class="thumbnail-card__tag">複製</span>' : '';
   return `
-    <article class="thumbnail-card ${page.selected ? 'thumbnail-card--selected' : ''}" draggable="true" tabindex="0" data-page-id="${page.id}">
+    <article class="thumbnail-card ${page.selected ? 'thumbnail-card--selected' : ''}" draggable="true" tabindex="0" data-page-id="${page.id}" title="${escapeHtml(page.fileName)}">
       <div class="thumbnail-card__header">
         <span class="thumbnail-card__number">${index + 1}</span>
         ${duplicateLabel}
@@ -47,10 +49,10 @@ function renderThumbnail(page, index, zoom) {
         </button>
       </div>
       <div class="thumbnail-card__image-wrap">
-        <img class="thumbnail-card__image" style="${getThumbnailImageStyle(page, zoom)}" src="${page.thumbnailUrl}" alt="${page.fileName} P.${page.originalPageNumber}" />
+        <img class="thumbnail-card__image" style="${getThumbnailImageStyle(page, zoom)}" src="${page.thumbnailUrl}" alt="${escapeHtml(page.fileName)} P.${page.originalPageNumber}" />
       </div>
       <div class="thumbnail-card__meta">
-        <span class="thumbnail-card__file" title="${page.fileName}">${page.fileName}</span>
+        ${renderShortFileName(page.fileName, 'thumbnail-card__file', 18)}
         <span>元 P.${page.originalPageNumber} / 回転 ${page.rotation}°</span>
       </div>
     </article>

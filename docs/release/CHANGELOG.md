@@ -8,6 +8,18 @@ PDF Utility の変更履歴。
 
 - Sprint 0.8.0: ページ操作 UX 安定化
 
+
+## 0.7.3-alpha - Sprint 0.7.3 / Issue #17
+
+Added:
+
+- Page Map と Page Viewer で共有するファイル名短縮関数を追加
+
+Changed:
+
+- サムネール下部のファイル名を先頭＋末尾の中間省略表示に変更
+- Page Map のファイル名表示も共通関数を使うように整理
+
 ## 0.7.2-alpha - Sprint 0.7.2 / Issue #16
 
 Added:

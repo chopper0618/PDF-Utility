@@ -637,8 +637,13 @@
 }
 
 .thumbnail-card__file {
+  display: block;
+  max-width: 100%;
   color: var(--color-text);
   font-weight: 700;
+  overflow: hidden;
+  text-overflow: clip;
+  white-space: nowrap;
 }
 
 .property-section {
