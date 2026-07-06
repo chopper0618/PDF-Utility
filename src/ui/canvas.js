@@ -1,4 +1,4 @@
-import { escapeHtml, renderShortFileName } from './fileName.js';
+import { escapeHtml, renderTwoLineFileName } from './fileName.js';
 
 
 function normalizeRotation(rotation) {
@@ -52,7 +52,11 @@ function renderThumbnail(page, index, zoom) {
         <img class="thumbnail-card__image" style="${getThumbnailImageStyle(page, zoom)}" src="${page.thumbnailUrl}" alt="${escapeHtml(page.fileName)} P.${page.originalPageNumber}" />
       </div>
       <div class="thumbnail-card__meta">
-        ${renderShortFileName(page.fileName, 'thumbnail-card__file', 18)}
+        ${renderTwoLineFileName(page.fileName, 'thumbnail-card__file', {
+          maxHeadLength: 13,
+          maxTailLength: 14,
+          splitThreshold: 22,
+        })}
         <span>元 P.${page.originalPageNumber} / 回転 ${page.rotation}°</span>
       </div>
     </article>

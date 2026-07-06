@@ -32,3 +32,79 @@ export function renderShortFileName(fileName, className, maxLength = 24) {
 
   return `<span class="${className}" title="${title}">${label}</span>`;
 }
+
+function getFileExtensionLength(name) {
+  const extensionMatch = name.match(/(\.[^.]{1,8})$/u);
+  return extensionMatch ? Array.from(extensionMatch[1]).length : 0;
+}
+
+function splitFileName(fileName, maxHeadLength, maxTailLength, splitThreshold) {
+  const name = String(fileName ?? '');
+  const chars = Array.from(name);
+
+  if (chars.length <= splitThreshold) {
+    return {
+      name,
+      shouldSplit: false,
+      head: name,
+      tail: '',
+    };
+  }
+
+  const extensionLength = getFileExtensionLength(name);
+  const tailLength = Math.min(
+    Math.max(maxTailLength, extensionLength + 7),
+    Math.max(1, chars.length - maxHeadLength),
+  );
+  const head = chars.slice(0, maxHeadLength).join('');
+  const tail = chars.slice(chars.length - tailLength).join('');
+
+  return {
+    name,
+    shouldSplit: true,
+    head,
+    tail,
+  };
+}
+
+export function renderSplitFileName(fileName, className, options = {}) {
+  const {
+    maxHeadLength = 10,
+    maxTailLength = 11,
+    splitThreshold = 18,
+  } = options;
+  const parts = splitFileName(fileName, maxHeadLength, maxTailLength, splitThreshold);
+  const title = escapeHtml(parts.name);
+
+  if (!parts.shouldSplit) {
+    return `<span class="${className}" title="${title}">${escapeHtml(parts.name)}</span>`;
+  }
+
+  return `
+    <span class="${className} ${className}--split" title="${title}">
+      <span class="${className}-head">${escapeHtml(parts.head)}…</span>
+      <span class="${className}-tail">…${escapeHtml(parts.tail)}</span>
+    </span>
+  `;
+}
+
+export function renderTwoLineFileName(fileName, className, options = {}) {
+  const {
+    maxHeadLength = 13,
+    maxTailLength = 14,
+    splitThreshold = 24,
+  } = options;
+  const parts = splitFileName(fileName, maxHeadLength, maxTailLength, splitThreshold);
+  const title = escapeHtml(parts.name);
+
+  if (!parts.shouldSplit) {
+    return `<span class="${className}" title="${title}">${escapeHtml(parts.name)}</span>`;
+  }
+
+  return `
+    <span class="${className} ${className}--two-line" title="${title}">
+      <span class="${className}-head">${escapeHtml(parts.head)}…</span>
+      <span class="${className}-tail">…${escapeHtml(parts.tail)}</span>
+    </span>
+  `;
+}

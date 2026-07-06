@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.7.4-alpha - Sprint 0.7.4 / Issue #18
+
+- Refined thumbnail card spacing.
+- Allowed thumbnail filenames to use up to two lines.
+- Kept Page Map filenames as single-line labels for overview scanning.
+- Preserved full filename tooltip on thumbnail cards.
+
 
 ## v0.7.3-alpha - Sprint 0.7.3 / Issue #17
 

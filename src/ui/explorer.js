@@ -1,7 +1,11 @@
-import { escapeHtml, renderShortFileName } from './fileName.js';
+import { escapeHtml, renderSplitFileName } from './fileName.js';
 
 function renderPageMapFileName(fileName) {
-  return renderShortFileName(fileName, 'page-map__file', 18);
+  return renderSplitFileName(fileName, 'page-map__file', {
+    maxHeadLength: 9,
+    maxTailLength: 10,
+    splitThreshold: 16,
+  });
 }
 function renderPageMapItem(page, index, selectedPageId) {
   const isActive = page.id === selectedPageId;

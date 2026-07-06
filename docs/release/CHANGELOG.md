@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## 0.7.4-alpha - Sprint 0.7.4 / Issue #18
+
+### Added
+
+- Thumbnail filenames can now use up to two lines.
+- Thumbnail cards keep the full filename tooltip on hover.
+
+### Changed
+
+- Reduced thumbnail card spacing slightly to improve file-name visibility.
+- Page Map filename labels remain single-line for fast page-order scanning.
+
 PDF Utility の変更履歴。
 
 ## Unreleased
