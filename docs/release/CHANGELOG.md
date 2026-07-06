@@ -6,8 +6,31 @@ PDF Utility の変更履歴。
 
 ### Planned
 
-- Sprint 0.7.1: ページ移動ダイアログの独自モーダル化を検討
 - Sprint 0.8.0: ページ操作 UX 安定化
+
+## 0.7.2-alpha - Sprint 0.7.2 / Issue #16
+
+Added:
+
+- 削除後の Status Bar に「Undoで元に戻せます。」を表示
+- Page Map のファイル名を先頭＋末尾の中間省略表示に変更
+
+Changed:
+
+- Page Map 下部のファイル一覧を削除
+- Page Map の hover title に現在ページ番号を追加
+
+## 0.7.1-alpha - Sprint 0.7.1 / Issue #15
+
+Added:
+
+- 「移動...」操作をブラウザ標準 prompt から独自モーダルへ変更
+- モーダル内で入力エラーを表示
+- Escape、背景クリック、キャンセル、× ボタンで閉じる操作に対応
+
+Fixed:
+
+- モーダル入力欄の Backspace がページ削除ショートカットに誤爆する問題を修正
 
 ## 0.7.0-alpha - Sprint 0.7.0 / Issue #14
 

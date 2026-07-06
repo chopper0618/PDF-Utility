@@ -1,47 +1,51 @@
-function formatBytes(bytes) {
-  if (!bytes) return '0 KB';
-  const kb = bytes / 1024;
-  if (kb < 1024) return `${Math.round(kb)} KB`;
-  return `${(kb / 1024).toFixed(1)} MB`;
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function shortenFileNameForPageMap(fileName, maxLength = 20) {
+  const name = String(fileName ?? '');
+  if (Array.from(name).length <= maxLength) return name;
+
+  const chars = Array.from(name);
+  const extensionMatch = name.match(/(\.[^.]{1,8})$/u);
+  const extension = extensionMatch ? extensionMatch[1] : '';
+  const extensionLength = Array.from(extension).length;
+
+  const headLength = 7;
+  const tailLength = Math.max(8, maxLength - headLength - 1);
+  const tailStart = Math.max(headLength, chars.length - Math.max(tailLength, extensionLength + 4));
+
+  return `${chars.slice(0, headLength).join('')}…${chars.slice(tailStart).join('')}`;
+}
+
+function renderPageMapFileName(fileName) {
+  const title = escapeHtml(fileName);
+  const label = shortenFileNameForPageMap(fileName);
+
+  return `<span class="page-map__file" title="${title}">${escapeHtml(label)}</span>`;
 }
 
 function renderPageMapItem(page, index, selectedPageId) {
   const isActive = page.id === selectedPageId;
   const duplicateLabel = page.duplicateOf ? '<span class="page-map__badge">複製</span>' : '';
+  const title = `${page.fileName} / 元 P.${page.originalPageNumber} / 現在 P.${index + 1}`;
 
   return `
     <li class="page-map__item ${isActive ? 'page-map__item--active' : ''}">
-      <button class="page-map__button" data-page-map-id="${page.id}" title="${page.fileName} / 元 P.${page.originalPageNumber}">
+      <button class="page-map__button" data-page-map-id="${page.id}" title="${escapeHtml(title)}">
         <span class="page-map__number">${index + 1}</span>
         <span class="page-map__text">
-          <span class="page-map__file">${page.fileName}</span>
+          ${renderPageMapFileName(page.fileName)}
           <span class="page-map__meta">元 P.${page.originalPageNumber} / 回転 ${page.rotation}°</span>
         </span>
         ${duplicateLabel}
       </button>
     </li>
-  `;
-}
-
-function renderFileSummary(files) {
-  if (files.length === 0) return '';
-
-  return `
-    <div class="page-map__files" aria-label="読み込み済みファイル">
-      ${files
-        .map(
-          (file) => `
-            <details class="file-tree__file" open>
-              <summary>
-                <span class="material-symbols-outlined" aria-hidden="true">picture_as_pdf</span>
-                <span class="file-tree__name" title="${file.name}">${file.name}</span>
-              </summary>
-              <div class="file-tree__meta">${file.pageCount}ページ / ${formatBytes(file.byteLength)}</div>
-            </details>
-          `,
-        )
-        .join('')}
-    </div>
   `;
 }
 
@@ -68,7 +72,6 @@ export function renderExplorer(root, context) {
             <ol class="page-map__list">
               ${pages.map((page, index) => renderPageMapItem(page, index, context.state.selectedPageId)).join('')}
             </ol>
-            ${renderFileSummary(files)}
           </div>`
     }
   `;

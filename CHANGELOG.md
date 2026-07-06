@@ -1,5 +1,28 @@
 # Changelog
 
+## v0.7.2-alpha - Sprint 0.7.2 / Issue #16
+
+### Added
+
+- ページ削除後のステータスバーに「Undoで元に戻せます。」を表示。
+- Page Map のファイル名を先頭＋末尾の中間省略表示に変更。
+
+### Changed
+
+- Page Map 下部のファイル一覧を削除。
+- Page Map のマウスオーバー情報に現在ページ番号を追加。
+
+## v0.7.1-alpha - Sprint 0.7.1 / Issue #15
+
+### Added
+
+- 「移動...」操作を独自モーダル化。
+- 移動先ページ番号の入力エラーをモーダル内に表示。
+
+### Fixed
+
+- モーダル入力欄で Backspace がページ削除ショートカットに誤爆する問題を修正。
+
 ## v0.7.0-alpha - Sprint 0.7.0 / Issue #14
 
 ### Added

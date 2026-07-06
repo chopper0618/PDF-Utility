@@ -13,8 +13,9 @@ function requestRender(eventBus) {
   eventBus.emit('state:changed');
 }
 
-function setStatus(context, message) {
+function setStatus(context, message, tone = 'default') {
   context.state.status = message;
+  context.state.statusTone = tone;
   requestRender(context.eventBus);
 }
 
@@ -289,7 +290,8 @@ export function createApp(root) {
     context.state.selectedPageIds.clear();
     context.state.selectedPageId = null;
     context.state.lastSelectedIndex = null;
-    setStatus(context, `${targetIds.length}ページを削除しました。`);
+    const count = targetIds.length;
+    setStatus(context, `${count}ページを削除しました。Undoで元に戻せます。`, 'danger');
   };
 
   context.actions.duplicateSelected = (pageId = null) => {

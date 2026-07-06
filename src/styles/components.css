@@ -1123,7 +1123,6 @@
   min-width: 0;
 }
 
-.page-map__file,
 .page-map__meta {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1131,6 +1130,11 @@
 }
 
 .page-map__file {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: clip;
+  white-space: nowrap;
   font-size: 12px;
   font-weight: 700;
 }
