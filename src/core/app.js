@@ -103,6 +103,21 @@ function toggleSelection(state, pageId) {
   applySelectionState(state);
 }
 
+function selectPageAtIndex(state, index) {
+  if (state.pages.length === 0) {
+    state.selectedPageIds.clear();
+    state.selectedPageId = null;
+    state.lastSelectedIndex = null;
+    applySelectionState(state);
+    return null;
+  }
+
+  const safeIndex = clamp(index, 0, state.pages.length - 1);
+  const page = state.pages[safeIndex];
+  selectOnly(state, page.id);
+  return page.id;
+}
+
 function getTargetIds(state, pageId = null) {
   if (pageId && !state.selectedPageIds.has(pageId)) return [pageId];
   return Array.from(state.selectedPageIds);
@@ -296,11 +311,11 @@ export function createApp(root) {
   context.actions.deleteSelected = (pageId = null) => {
     const targetIds = getTargetIds(context.state, pageId);
     if (targetIds.length === 0) return;
+    const firstTargetIndex = context.state.pages.findIndex((page) => targetIds.includes(page.id));
     pushHistory(context, '削除');
     context.state.pages = context.state.pages.filter((page) => !targetIds.includes(page.id));
-    context.state.selectedPageIds.clear();
-    context.state.selectedPageId = null;
-    context.state.lastSelectedIndex = null;
+    const nextPageId = selectPageAtIndex(context.state, firstTargetIndex);
+    context.state.scrollToPageId = nextPageId;
     const count = targetIds.length;
     setStatus(context, `${count}ページを削除しました。Undoで元に戻せます。`, 'danger');
   };
@@ -328,6 +343,7 @@ export function createApp(root) {
     context.state.selectedPageIds = new Set(newIds);
     context.state.selectedPageId = newIds.at(-1) ?? null;
     applySelectionState(context.state);
+    context.state.scrollToPageId = context.state.selectedPageId;
     setStatus(context, `${newIds.length}ページを複製しました。`);
   };
 
@@ -442,6 +458,7 @@ export function createApp(root) {
     restoreSnapshot(context.state, snap);
     context.state.contextMenu = null;
     context.state.dialog = null;
+    context.state.scrollToPageId = context.state.selectedPageId;
     setStatus(context, `${label}を元に戻しました。Redoでやり直せます。`);
   };
 
@@ -457,6 +474,7 @@ export function createApp(root) {
     restoreSnapshot(context.state, snap);
     context.state.contextMenu = null;
     context.state.dialog = null;
+    context.state.scrollToPageId = context.state.selectedPageId;
     setStatus(context, `${label}をやり直しました。Undoで元に戻せます。`);
   };
 

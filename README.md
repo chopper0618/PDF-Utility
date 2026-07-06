@@ -4,8 +4,8 @@ A modern PDF editing utility designed to make everyday PDF work in hospitals fas
 
 ## Status
 
-Current version: `v0.8.0-alpha`
-Current sprint: `Sprint 0.8.0 review`
+Current version: `v0.8.1-alpha`
+Current sprint: `Sprint 0.8.1 review`
 Main branch: `main`
 Development branch: `develop`
 
@@ -30,6 +30,8 @@ Implemented:
 - Undo / Redo
 - PDF export
 - OS-native PDF save dialog
+- Selection remains on a nearby page after delete
+- Undo / Redo restores view position to the active page
 - Workspace-based VS Code development environment
 
 Planned:

@@ -1,6 +1,6 @@
 {
   "name": "pdf-utility",
-  "version": "0.7.4-alpha",
+  "version": "0.8.1-alpha",
   "private": true,
   "type": "module",
   "scripts": {
