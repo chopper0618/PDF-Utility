@@ -4,8 +4,8 @@ A modern PDF editing utility designed to make everyday PDF work in hospitals fas
 
 ## Status
 
-Current version: `v0.7.4-alpha`
-Current sprint: `Sprint 0.7.4 review`
+Current version: `v0.8.0-alpha`
+Current sprint: `Sprint 0.8.0 review`
 Main branch: `main`
 Development branch: `develop`
 
@@ -29,12 +29,13 @@ Implemented:
 - Page duplicate
 - Undo / Redo
 - PDF export
+- OS-native PDF save dialog
 - Workspace-based VS Code development environment
 
 Planned:
 
 - Google Drive integration
-- Export dialog
+- Export error handling
 - Image to PDF
 - Page numbering
 - Watermark

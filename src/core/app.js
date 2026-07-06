@@ -391,8 +391,20 @@ export function createApp(root) {
 
   context.actions.closeDialog = () => {
     if (!context.state.dialog) return;
+    const dialogType = context.state.dialog.type;
     context.state.dialog = null;
-    setStatus(context, 'ページ移動をキャンセルしました。');
+
+    if (dialogType === 'move-to-page') {
+      setStatus(context, 'ページ移動をキャンセルしました。');
+      return;
+    }
+
+    if (dialogType === 'export-pdf') {
+      setStatus(context, 'PDF作成をキャンセルしました。');
+      return;
+    }
+
+    setStatus(context, 'ダイアログを閉じました。');
   };
 
   context.actions.submitMoveToPageDialog = (value) => {
@@ -450,33 +462,71 @@ export function createApp(root) {
 
 
 
-  context.actions.exportPdf = async () => {
+  context.actions.promptExportPdf = () => {
     if (context.state.pages.length === 0) {
       setStatus(context, '出力するページがありません。');
       return;
     }
 
-    const suggestedName = getSuggestedOutputFileName(context.state);
-    const inputName = window.prompt('出力ファイル名を入力してください。', suggestedName);
-    if (inputName === null) {
-      setStatus(context, 'PDF作成をキャンセルしました。');
+    context.state.dialog = {
+      type: 'export-pdf',
+      value: getSuggestedOutputFileName(context.state),
+      error: '',
+    };
+    context.state.contextMenu = null;
+    requestRender(context.eventBus);
+  };
+
+  context.actions.exportPdf = async (outputFileName = null) => {
+    if (context.state.pages.length === 0) {
+      setStatus(context, '出力するページがありません。');
       return;
     }
+
+    const safeName = String(outputFileName ?? getSuggestedOutputFileName(context.state)).trim();
+    if (!safeName) {
+      setStatus(context, '出力ファイル名を入力してください。');
+      return;
+    }
+
+    const fileName = safeName.toLowerCase().endsWith('.pdf') ? safeName : `${safeName}.pdf`;
 
     context.state.isLoading = true;
     setStatus(context, 'PDFを作成中...');
 
     try {
       const blob = await createMergedPdfBlob(context.state);
-      downloadBlob(blob, inputName);
-      setStatus(context, `PDFを作成しました: ${context.state.pages.length}ページ`);
+      downloadBlob(blob, fileName);
+      setStatus(context, `PDFを作成しました: ${fileName} / ${context.state.pages.length}ページ`);
     } catch (error) {
       console.error(error);
-      setStatus(context, `PDF作成エラー: ${error.message}`);
+      setStatus(context, `PDF作成エラー: ${error.message}`, 'danger');
     } finally {
       context.state.isLoading = false;
       requestRender(eventBus);
     }
+  };
+
+  context.actions.submitExportPdfDialog = (value) => {
+    if (context.state.pages.length === 0) {
+      context.state.dialog = null;
+      requestRender(context.eventBus);
+      return;
+    }
+
+    const inputText = String(value ?? '').trim();
+    if (!inputText) {
+      context.state.dialog = {
+        type: 'export-pdf',
+        value: inputText,
+        error: '出力ファイル名を入力してください。',
+      };
+      requestRender(context.eventBus);
+      return;
+    }
+
+    context.state.dialog = null;
+    context.actions.exportPdf(inputText);
   };
 
   context.actions.openContextMenu = (pageId, x, y) => {

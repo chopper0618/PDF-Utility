@@ -4,6 +4,15 @@ import { renderCanvas } from './canvas.js';
 import { renderProperties } from './properties.js';
 import { renderStatusBar } from './statusbar.js';
 
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
 function isEditableTarget(target) {
   if (!(target instanceof HTMLElement)) return false;
 
@@ -108,6 +117,51 @@ function renderDialog(context) {
     `;
   }
 
+
+  if (dialog.type === 'export-pdf') {
+    const value = escapeHtml(dialog.value ?? '');
+    const error = dialog.error ?? '';
+    const pageCount = context.state.pages.length;
+
+    return `
+      <div class="modal-backdrop" data-dialog-backdrop>
+        <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="export-dialog-title">
+          <form data-dialog-form="export-pdf">
+            <div class="modal-card__header">
+              <div>
+                <h2 id="export-dialog-title">PDFを作成</h2>
+                <p>現在のページ順で ${pageCount}ページのPDFを書き出します。</p>
+              </div>
+              <button class="modal-card__close" type="button" data-dialog-cancel aria-label="閉じる">
+                <span class="material-symbols-outlined" aria-hidden="true">close</span>
+              </button>
+            </div>
+
+            <label class="field-row" for="export-file-name-input">
+              <span class="field-row__label">ファイル名</span>
+              <input
+                id="export-file-name-input"
+                name="fileName"
+                type="text"
+                value="${value}"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </label>
+
+            <p class="modal-card__hint">拡張子 .pdf は省略しても自動で追加します。</p>
+            ${error ? `<p class="modal-card__error" role="alert">${escapeHtml(error)}</p>` : ''}
+
+            <div class="modal-card__actions">
+              <button class="secondary-button" type="button" data-dialog-cancel>キャンセル</button>
+              <button class="primary-action-button" type="submit">作成</button>
+            </div>
+          </form>
+        </section>
+      </div>
+    `;
+  }
+
   return '';
 }
 
@@ -124,14 +178,21 @@ function bindDialog(root, context) {
     if (event.target === backdrop) context.actions.closeDialog();
   });
 
-  const form = modalRoot.querySelector('[data-dialog-form="move-to-page"]');
-  form?.addEventListener('submit', (event) => {
+  const moveForm = modalRoot.querySelector('[data-dialog-form="move-to-page"]');
+  moveForm?.addEventListener('submit', (event) => {
     event.preventDefault();
-    const formData = new FormData(form);
+    const formData = new FormData(moveForm);
     context.actions.submitMoveToPageDialog(formData.get('pageNumber'));
   });
 
-  const input = modalRoot.querySelector('#move-to-page-input');
+  const exportForm = modalRoot.querySelector('[data-dialog-form="export-pdf"]');
+  exportForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const formData = new FormData(exportForm);
+    context.actions.submitExportPdfDialog(formData.get('fileName'));
+  });
+
+  const input = modalRoot.querySelector('#move-to-page-input, #export-file-name-input');
   if (input) {
     window.requestAnimationFrame(() => {
       input.focus();

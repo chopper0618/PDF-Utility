@@ -137,7 +137,7 @@ function runAction(context, actionId, input) {
       input.click();
       break;
     case 'export-pdf':
-      context.actions.exportPdf();
+      context.actions.promptExportPdf();
       break;
     case 'undo':
       context.actions.undo();

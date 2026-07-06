@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.8.0-alpha - Sprint 0.8.0 / Issue #20
+
+### Changed
+
+- Removed the browser `window.prompt()` export filename prompt.
+- Kept PDF export on the OS-native save dialog so users can choose filename and destination in one place.
+- Improved export completion status to include the output filename and page count.
+
 ## v0.7.4-alpha - Sprint 0.7.4 / Issue #18
 
 - Refined thumbnail card spacing.
