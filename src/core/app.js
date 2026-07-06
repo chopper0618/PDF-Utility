@@ -47,11 +47,22 @@ function restoreSnapshot(state, snap) {
   });
 }
 
-function pushHistory(context) {
+function pushHistory(context, label = '操作') {
   const history = context.state.history;
-  history.undo.push(snapshot(context.state));
+  history.undo.push({
+    label,
+    snapshot: snapshot(context.state),
+  });
   if (history.undo.length > history.limit) history.undo.shift();
   history.redo = [];
+}
+
+function normalizeHistoryEntry(entry) {
+  if (entry?.snapshot) return entry;
+  return {
+    label: '操作',
+    snapshot: entry,
+  };
 }
 
 function applySelectionState(state) {
@@ -174,7 +185,7 @@ export function createApp(root) {
       return;
     }
 
-    pushHistory(context);
+    pushHistory(context, 'PDF追加');
     context.state.isLoading = true;
     setStatus(context, `${files.length}件のPDFを読み込み中...`);
 
@@ -273,7 +284,7 @@ export function createApp(root) {
   context.actions.rotateSelected = (degrees, pageId = null) => {
     const targetIds = getTargetIds(context.state, pageId);
     if (targetIds.length === 0) return;
-    pushHistory(context);
+    pushHistory(context, '回転');
     context.state.pages.forEach((page) => {
       if (targetIds.includes(page.id)) {
         page.rotation = (page.rotation + degrees + 360) % 360;
@@ -285,7 +296,7 @@ export function createApp(root) {
   context.actions.deleteSelected = (pageId = null) => {
     const targetIds = getTargetIds(context.state, pageId);
     if (targetIds.length === 0) return;
-    pushHistory(context);
+    pushHistory(context, '削除');
     context.state.pages = context.state.pages.filter((page) => !targetIds.includes(page.id));
     context.state.selectedPageIds.clear();
     context.state.selectedPageId = null;
@@ -297,7 +308,7 @@ export function createApp(root) {
   context.actions.duplicateSelected = (pageId = null) => {
     const targetIds = getTargetIds(context.state, pageId);
     if (targetIds.length === 0) return;
-    pushHistory(context);
+    pushHistory(context, '複製');
     const nextPages = [];
     const newIds = [];
     context.state.pages.forEach((page) => {
@@ -321,7 +332,7 @@ export function createApp(root) {
   };
 
   context.actions.reorderPage = (draggedId, targetId, position = 'before') => {
-    pushHistory(context);
+    pushHistory(context, '並び替え');
     const changed = reorderPage(context.state, draggedId, targetId, position);
     if (!changed) {
       context.state.history.undo.pop();
@@ -339,7 +350,7 @@ export function createApp(root) {
       return false;
     }
 
-    pushHistory(context);
+    pushHistory(context, '移動');
     const changed = moveSelectedPagesToIndex(context.state, targetPageNumber - 1);
     if (!changed) {
       context.state.history.undo.pop();
@@ -355,7 +366,7 @@ export function createApp(root) {
 
   context.actions.moveSelectedToEdge = (edge) => {
     if (context.state.selectedPageIds.size === 0) return;
-    pushHistory(context);
+    pushHistory(context, '移動');
     const changed = moveSelectedPagesToEdge(context.state, edge);
     if (!changed) {
       context.state.history.undo.pop();
@@ -408,19 +419,33 @@ export function createApp(root) {
   };
 
   context.actions.undo = () => {
-    const snap = context.state.history.undo.pop();
-    if (!snap) return;
-    context.state.history.redo.push(snapshot(context.state));
+    const entry = context.state.history.undo.pop();
+    if (!entry) return;
+
+    const { label, snapshot: snap } = normalizeHistoryEntry(entry);
+    context.state.history.redo.push({
+      label,
+      snapshot: snapshot(context.state),
+    });
     restoreSnapshot(context.state, snap);
-    setStatus(context, '元に戻しました。');
+    context.state.contextMenu = null;
+    context.state.dialog = null;
+    setStatus(context, `${label}を元に戻しました。Redoでやり直せます。`);
   };
 
   context.actions.redo = () => {
-    const snap = context.state.history.redo.pop();
-    if (!snap) return;
-    context.state.history.undo.push(snapshot(context.state));
+    const entry = context.state.history.redo.pop();
+    if (!entry) return;
+
+    const { label, snapshot: snap } = normalizeHistoryEntry(entry);
+    context.state.history.undo.push({
+      label,
+      snapshot: snapshot(context.state),
+    });
     restoreSnapshot(context.state, snap);
-    setStatus(context, 'やり直しました。');
+    context.state.contextMenu = null;
+    context.state.dialog = null;
+    setStatus(context, `${label}をやり直しました。Undoで元に戻せます。`);
   };
 
 
