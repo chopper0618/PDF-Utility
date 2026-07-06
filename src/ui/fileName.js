@@ -38,7 +38,7 @@ function getFileExtensionLength(name) {
   return extensionMatch ? Array.from(extensionMatch[1]).length : 0;
 }
 
-function splitFileName(fileName, maxHeadLength, maxTailLength, splitThreshold) {
+function splitFileName(fileName, maxHeadLength, maxTailLength, splitThreshold, minTailExtra = 7) {
   const name = String(fileName ?? '');
   const chars = Array.from(name);
 
@@ -53,7 +53,7 @@ function splitFileName(fileName, maxHeadLength, maxTailLength, splitThreshold) {
 
   const extensionLength = getFileExtensionLength(name);
   const tailLength = Math.min(
-    Math.max(maxTailLength, extensionLength + 7),
+    Math.max(maxTailLength, extensionLength + minTailExtra),
     Math.max(1, chars.length - maxHeadLength),
   );
   const head = chars.slice(0, maxHeadLength).join('');
@@ -72,8 +72,9 @@ export function renderSplitFileName(fileName, className, options = {}) {
     maxHeadLength = 10,
     maxTailLength = 11,
     splitThreshold = 18,
+    minTailExtra = 7,
   } = options;
-  const parts = splitFileName(fileName, maxHeadLength, maxTailLength, splitThreshold);
+  const parts = splitFileName(fileName, maxHeadLength, maxTailLength, splitThreshold, minTailExtra);
   const title = escapeHtml(parts.name);
 
   if (!parts.shouldSplit) {

@@ -348,14 +348,21 @@ export function createApp(root) {
   };
 
   context.actions.reorderPage = (draggedId, targetId, position = 'before') => {
+    const draggedWasSelected = context.state.selectedPageIds.has(draggedId);
     pushHistory(context, '並び替え');
     const changed = reorderPage(context.state, draggedId, targetId, position);
     if (!changed) {
       context.state.history.undo.pop();
       return;
     }
-    applySelectionState(context.state);
-    setStatus(context, 'ページ順を変更しました。');
+    if (!draggedWasSelected && context.state.pages.some((page) => page.id === draggedId)) {
+      selectOnly(context.state, draggedId);
+    } else {
+      applySelectionState(context.state);
+      context.state.lastSelectedIndex = context.state.pages.findIndex((page) => page.id === context.state.selectedPageId);
+    }
+    context.state.scrollToPageId = context.state.selectedPageId ?? draggedId;
+    setStatus(context, 'ページ順を変更しました。Undoで元に戻せます。');
   };
 
   context.actions.moveSelectedToPageNumber = (pageNumber) => {

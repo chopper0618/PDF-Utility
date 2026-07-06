@@ -9,7 +9,7 @@ function getInitialZoom() {
 }
 
 export const appState = {
-  version: '0.8.1-alpha',
+  version: '0.8.2-alpha',
   files: [],
   pages: [],
   selectedPageIds: new Set(),

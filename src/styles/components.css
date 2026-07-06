@@ -1382,3 +1382,53 @@
   text-overflow: clip;
   white-space: nowrap;
 }
+
+/* Sprint 0.8.2 / Issue #22: Page Map drag reorder */
+.page-map__item {
+  position: relative;
+}
+
+.page-map__item[draggable="true"] {
+  cursor: grab;
+}
+
+.page-map__item--dragging {
+  opacity: 0.48;
+}
+
+.page-map__item--drop-before::before,
+.page-map__item--drop-after::after {
+  content: '';
+  position: absolute;
+  right: 8px;
+  left: 8px;
+  z-index: 1;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary-soft);
+}
+
+.page-map__item--drop-before::before {
+  top: -2px;
+}
+
+.page-map__item--drop-after::after {
+  bottom: -2px;
+}
+
+.page-map__item--dragging .page-map__button {
+  cursor: grabbing;
+}
+
+.page-map__file--split .page-map__file-head {
+  flex: 1 1 auto;
+  max-width: 48%;
+}
+
+.page-map__file--split .page-map__file-tail {
+  flex: 1 1 auto;
+  max-width: 52%;
+  direction: rtl;
+  text-align: left;
+}

@@ -4,8 +4,8 @@ A modern PDF editing utility designed to make everyday PDF work in hospitals fas
 
 ## Status
 
-Current version: `v0.8.1-alpha`
-Current sprint: `Sprint 0.8.1 review`
+Current version: `v0.8.2-alpha`
+Current sprint: `Sprint 0.8.2 review`
 Main branch: `main`
 Development branch: `develop`
 
