@@ -7,6 +7,15 @@ export function escapeHtml(value) {
     .replaceAll("'", '&#39;');
 }
 
+
+export function shortenFileNameStart(fileName, maxLength = 24) {
+  const name = String(fileName ?? '');
+  const chars = Array.from(name);
+  if (chars.length <= maxLength) return name;
+
+  return `${chars.slice(0, Math.max(1, maxLength - 1)).join('')}…`;
+}
+
 export function shortenFileNameMiddle(fileName, maxLength = 24) {
   const name = String(fileName ?? '');
   const chars = Array.from(name);

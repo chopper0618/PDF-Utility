@@ -9,7 +9,7 @@ function getInitialZoom() {
 }
 
 export const appState = {
-  version: '0.8.4-alpha',
+  version: '0.8.5-alpha',
   files: [],
   pages: [],
   selectedPageIds: new Set(),
@@ -29,6 +29,8 @@ export const appState = {
   previewPageId: null,
   previewImageUrl: null,
   previewLoading: false,
+  previewZoom: 1,
+  previewFitMode: 'height',
   scrollToPageId: null,
 };
 

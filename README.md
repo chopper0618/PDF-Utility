@@ -4,8 +4,8 @@ A modern PDF editing utility designed to make everyday PDF work in hospitals fas
 
 ## Status
 
-Current version: `v0.8.4-alpha`
-Current sprint: `Sprint 0.8.4 review`
+Current version: `v0.8.5-alpha`
+Current sprint: `Sprint 0.8.5 review`
 Main branch: `main`
 Development branch: `develop`
 
@@ -32,6 +32,7 @@ Implemented:
 - OS-native PDF save dialog
 - Thumbnail preview overlay
 - Preview previous / next page navigation
+- Preview fit-to-window and zoom controls
 - Selection remains on a nearby page after delete
 - Undo / Redo restores view position to the active page
 - Workspace-based VS Code development environment

@@ -184,9 +184,13 @@ function renderDialog(context) {
   return '';
 }
 
-function getPreviewImageStyle(page) {
-  const rotation = ((Number(page.rotation) % 360) + 360) % 360;
-  return `transform: rotate(${rotation}deg);`;
+function getPreviewImageStyle() {
+  return '';
+}
+
+function getPreviewZoomLabel(zoom) {
+  const value = Number(zoom) || 1;
+  return `${Math.round(value * 100)}%`;
 }
 
 function renderPreviewDialog(context) {
@@ -197,50 +201,70 @@ function renderPreviewDialog(context) {
   if (!page) return '';
 
   const currentIndex = context.state.pages.findIndex((item) => item.id === pageId);
-  const title = `${currentIndex + 1}ページ目プレビュー`;
+  const title = `P.${currentIndex + 1}`;
   const hasPrevious = currentIndex > 0;
   const hasNext = currentIndex < context.state.pages.length - 1;
+  const zoom = Number(context.state.previewZoom) || 1;
+  const isFit = zoom <= 1;
+  const fitMode = context.state.previewFitMode === 'width' ? 'width' : 'height';
   const imageUrl = context.state.previewImageUrl || page.thumbnailUrl;
   const imageContent = context.state.previewLoading
     ? `<div class="preview-card__loading" role="status">
         <span class="material-symbols-outlined" aria-hidden="true">progress_activity</span>
         <strong>プレビューを生成中...</strong>
       </div>`
-    : `<img class="preview-card__image" src="${imageUrl}" alt="${escapeHtml(page.fileName)} P.${page.originalPageNumber}" style="${getPreviewImageStyle(page)}" />`;
+    : `<img
+        class="preview-card__image"
+        src="${imageUrl}"
+        alt="${escapeHtml(page.fileName)} P.${page.originalPageNumber}"
+        data-preview-mode="${isFit ? 'fit' : 'zoom'}"
+        data-preview-fit="${fitMode}"
+        style="${getPreviewImageStyle(page)} --preview-zoom: ${zoom};"
+      />`;
 
   return `
     <div class="modal-backdrop modal-backdrop--preview" data-preview-backdrop>
       <section class="preview-card" role="dialog" aria-modal="true" aria-labelledby="preview-title">
         <div class="preview-card__header">
           <div class="preview-card__title-block">
-            <span class="preview-card__eyebrow">Thumbnail Preview</span>
-            <h2 id="preview-title">${escapeHtml(title)}</h2>
-            <p class="preview-card__file-name" title="${escapeHtml(page.fileName)}">${escapeHtml(page.fileName)}</p>
-            <div class="preview-card__meta-grid" aria-label="ページ情報">
-              <span><strong>現在</strong>P.${currentIndex + 1}</span>
-              <span><strong>元ページ</strong>P.${page.originalPageNumber}</span>
-              <span><strong>回転</strong>${page.rotation}°</span>
+            <div class="preview-card__title-row">
+              <span class="preview-card__eyebrow">Preview</span>
+              <h2 id="preview-title">${escapeHtml(title)}</h2>
+              <span class="preview-card__meta-text">元 P.${page.originalPageNumber}</span>
+              <span class="preview-card__meta-text">回転 ${page.rotation}°</span>
             </div>
+            <p class="preview-card__file-name" title="${escapeHtml(page.fileName)}">${escapeHtml(page.fileName)}</p>
           </div>
-          <button class="modal-card__close" type="button" data-preview-close aria-label="閉じる">
-            <span class="material-symbols-outlined" aria-hidden="true">close</span>
-          </button>
+
+          <div class="preview-card__toolbar" aria-label="プレビュー操作">
+            <div class="preview-card__nav" aria-label="プレビュー内ページ移動">
+              <button class="secondary-button preview-card__icon-button" type="button" data-preview-prev ${hasPrevious ? '' : 'disabled'} aria-label="前のページ">
+                <span class="material-symbols-outlined" aria-hidden="true">chevron_left</span>
+              </button>
+              <button class="secondary-button preview-card__icon-button" type="button" data-preview-next ${hasNext ? '' : 'disabled'} aria-label="次のページ">
+                <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>
+              </button>
+            </div>
+
+            <div class="preview-card__zoom" aria-label="プレビュー倍率">
+              <button class="secondary-button preview-card__icon-button" type="button" data-preview-zoom-out ${isFit ? 'disabled' : ''} aria-label="縮小">
+                <span class="material-symbols-outlined" aria-hidden="true">remove</span>
+              </button>
+              <span class="preview-card__zoom-value" aria-label="現在の拡大率">${escapeHtml(getPreviewZoomLabel(zoom))}</span>
+              <button class="secondary-button preview-card__fit-button ${fitMode === 'height' && isFit ? 'preview-card__fit-button--active' : ''}" type="button" data-preview-fit-height title="高さに合わせる">高さ</button>
+              <button class="secondary-button preview-card__fit-button ${fitMode === 'width' && isFit ? 'preview-card__fit-button--active' : ''}" type="button" data-preview-fit-width title="幅に合わせる">幅</button>
+              <button class="secondary-button preview-card__icon-button" type="button" data-preview-zoom-in ${zoom >= 3 ? 'disabled' : ''} aria-label="拡大">
+                <span class="material-symbols-outlined" aria-hidden="true">add</span>
+              </button>
+            </div>
+
+            <button class="modal-card__close preview-card__close" type="button" data-preview-close aria-label="閉じる">
+              <span class="material-symbols-outlined" aria-hidden="true">close</span>
+            </button>
+          </div>
         </div>
-        <div class="preview-card__body">
+        <div class="preview-card__body" data-preview-body data-preview-fit="${fitMode}" data-preview-mode="${isFit ? 'fit' : 'zoom'}">
           ${imageContent}
-        </div>
-        <div class="preview-card__footer">
-          <p class="preview-card__hint">← → で前後ページ / Esc・背景クリック・× で閉じます。</p>
-          <div class="preview-card__nav" aria-label="プレビュー内ページ移動">
-            <button class="secondary-button preview-card__nav-button" type="button" data-preview-prev ${hasPrevious ? '' : 'disabled'}>
-              <span class="material-symbols-outlined" aria-hidden="true">chevron_left</span>
-              前へ
-            </button>
-            <button class="secondary-button preview-card__nav-button" type="button" data-preview-next ${hasNext ? '' : 'disabled'}>
-              次へ
-              <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>
-            </button>
-          </div>
         </div>
       </section>
     </div>
@@ -262,6 +286,30 @@ function bindPreview(root, context) {
   modalRoot.querySelector('[data-preview-next]')?.addEventListener('click', () => {
     context.actions.previewAdjacentPage(1);
   });
+
+  modalRoot.querySelector('[data-preview-zoom-out]')?.addEventListener('click', () => {
+    context.actions.zoomPreview(-1);
+  });
+
+  modalRoot.querySelector('[data-preview-zoom-in]')?.addEventListener('click', () => {
+    context.actions.zoomPreview(1);
+  });
+
+  modalRoot.querySelector('[data-preview-fit-height]')?.addEventListener('click', () => {
+    context.actions.fitPreviewToHeight();
+  });
+
+  modalRoot.querySelector('[data-preview-fit-width]')?.addEventListener('click', () => {
+    context.actions.fitPreviewToWidth();
+  });
+
+  const previewBody = modalRoot.querySelector('[data-preview-body]');
+  if (previewBody && previewBody.dataset.previewMode === 'zoom') {
+    window.requestAnimationFrame(() => {
+      previewBody.scrollLeft = Math.max(0, (previewBody.scrollWidth - previewBody.clientWidth) / 2);
+      previewBody.scrollTop = Math.max(0, (previewBody.scrollHeight - previewBody.clientHeight) / 2);
+    });
+  }
 
   const backdrop = modalRoot.querySelector('[data-preview-backdrop]');
   backdrop?.addEventListener('click', (event) => {

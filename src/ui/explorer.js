@@ -1,12 +1,10 @@
-import { escapeHtml, renderSplitFileName } from './fileName.js';
+import { escapeHtml, shortenFileNameStart } from './fileName.js';
 
 function renderPageMapFileName(fileName) {
-  return renderSplitFileName(fileName, 'page-map__file', {
-    maxHeadLength: 7,
-    maxTailLength: 8,
-    splitThreshold: 14,
-    minTailExtra: 3,
-  });
+  const label = escapeHtml(shortenFileNameStart(fileName, 24));
+  const title = escapeHtml(fileName);
+
+  return `<span class="page-map__file" title="${title}">${label}</span>`;
 }
 
 function renderPageMapItem(page, index, selectedPageId) {

@@ -468,6 +468,8 @@ export function createApp(root) {
     context.state.previewPageId = null;
     context.state.previewImageUrl = null;
     context.state.previewLoading = false;
+    context.state.previewZoom = 1;
+    context.state.previewFitMode = 'height';
     context.state.scrollToPageId = context.state.selectedPageId;
     setStatus(context, `${label}を元に戻しました。Redoでやり直せます。`);
   };
@@ -487,17 +489,24 @@ export function createApp(root) {
     context.state.previewPageId = null;
     context.state.previewImageUrl = null;
     context.state.previewLoading = false;
+    context.state.previewZoom = 1;
+    context.state.previewFitMode = 'height';
     context.state.scrollToPageId = context.state.selectedPageId;
     setStatus(context, `${label}をやり直しました。Undoで元に戻せます。`);
   };
 
 
-  context.actions.openPreviewPage = async (pageId) => {
+  context.actions.openPreviewPage = async (pageId, options = {}) => {
     const page = context.state.pages.find((item) => item.id === pageId);
     if (!page) return;
 
     selectOnly(context.state, pageId);
+    const shouldResetZoom = options.resetZoom ?? !context.state.previewPageId;
     context.state.previewPageId = pageId;
+    if (shouldResetZoom) {
+      context.state.previewZoom = 1;
+      context.state.previewFitMode = 'height';
+    }
     context.state.previewImageUrl = null;
     context.state.previewLoading = true;
     context.state.contextMenu = null;
@@ -508,7 +517,7 @@ export function createApp(root) {
     try {
       const file = context.state.files.find((item) => item.id === page.fileId);
       if (!file?.pdfDocument) throw new Error('元PDFが見つかりません。');
-      const preview = await renderPageThumbnail(file.pdfDocument, page.originalPageNumber, 1100);
+      const preview = await renderPageThumbnail(file.pdfDocument, page.originalPageNumber, 1100, page.rotation);
 
       if (context.state.previewPageId !== pageId) return;
       context.state.previewImageUrl = preview.dataUrl;
@@ -545,8 +554,33 @@ export function createApp(root) {
     const nextPageId = context.state.pages[nextIndex]?.id;
     if (nextPageId) {
       context.state.scrollToPageId = nextPageId;
-      context.actions.openPreviewPage(nextPageId);
+      context.actions.openPreviewPage(nextPageId, { resetZoom: false });
     }
+  };
+
+  context.actions.zoomPreview = (direction) => {
+    if (!context.state.previewPageId) return;
+    const step = 0.25;
+    const currentZoom = Number(context.state.previewZoom) || 1;
+    const nextZoom = Math.min(3, Math.max(1, currentZoom + Math.sign(Number(direction) || 0) * step));
+    if (nextZoom === currentZoom) return;
+    context.state.previewZoom = nextZoom;
+    const modeLabel = context.state.previewFitMode === 'width' ? '幅フィット基準' : '高さフィット基準';
+    setStatus(context, nextZoom === 1 ? `プレビューを${context.state.previewFitMode === 'width' ? '幅' : '高さ'}に合わせました。` : `プレビュー倍率を${Math.round(nextZoom * 100)}%にしました（${modeLabel}）。`);
+  };
+
+  context.actions.fitPreviewToHeight = () => {
+    if (!context.state.previewPageId) return;
+    context.state.previewFitMode = 'height';
+    context.state.previewZoom = 1;
+    setStatus(context, 'プレビューを高さに合わせました。');
+  };
+
+  context.actions.fitPreviewToWidth = () => {
+    if (!context.state.previewPageId) return;
+    context.state.previewFitMode = 'width';
+    context.state.previewZoom = 1;
+    setStatus(context, 'プレビューを幅に合わせました。');
   };
 
   context.actions.closePreview = () => {
@@ -554,6 +588,8 @@ export function createApp(root) {
     context.state.previewPageId = null;
     context.state.previewImageUrl = null;
     context.state.previewLoading = false;
+    context.state.previewZoom = 1;
+    context.state.previewFitMode = 'height';
     setStatus(context, 'プレビューを閉じました。');
   };
 
