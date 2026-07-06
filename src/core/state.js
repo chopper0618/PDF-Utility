@@ -9,7 +9,7 @@ function getInitialZoom() {
 }
 
 export const appState = {
-  version: '0.5.0-alpha',
+  version: '0.7.0-alpha',
   files: [],
   pages: [],
   selectedPageIds: new Set(),
@@ -24,6 +24,7 @@ export const appState = {
     limit: 50,
   },
   contextMenu: null,
+  scrollToPageId: null,
 };
 
 export function getSelectedPage(state = appState) {

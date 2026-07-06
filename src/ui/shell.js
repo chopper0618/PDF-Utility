@@ -84,8 +84,14 @@ export function renderShell(root, context) {
 
     const nextCanvasContent = document.querySelector('#canvas .canvas__content');
     if (nextCanvasContent && context.state.pages.length > 0) {
-      nextCanvasContent.scrollTop = previousScrollTop;
-      nextCanvasContent.scrollLeft = previousScrollLeft;
+      if (context.state.scrollToPageId) {
+        const target = nextCanvasContent.querySelector(`[data-page-id="${context.state.scrollToPageId}"]`);
+        target?.scrollIntoView({ block: 'center', inline: 'nearest' });
+        context.state.scrollToPageId = null;
+      } else {
+        nextCanvasContent.scrollTop = previousScrollTop;
+        nextCanvasContent.scrollLeft = previousScrollLeft;
+      }
     }
   };
 

@@ -104,6 +104,48 @@ function reorderPage(state, draggedId, targetId, position = 'before') {
   return true;
 }
 
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function moveSelectedPagesToIndex(state, targetIndex) {
+  if (!Number.isInteger(targetIndex) || state.selectedPageIds.size === 0) return false;
+
+  const selectedIds = new Set(state.selectedPageIds);
+  const firstSelectedIndex = state.pages.findIndex((page) => selectedIds.has(page.id));
+  if (firstSelectedIndex < 0) return false;
+
+  const moving = state.pages.filter((page) => selectedIds.has(page.id));
+  const remaining = state.pages.filter((page) => !selectedIds.has(page.id));
+  const currentInsertIndex = state.pages.slice(0, firstSelectedIndex).filter((page) => !selectedIds.has(page.id)).length;
+  const maxInsertIndex = Math.max(0, state.pages.length - moving.length);
+  const nextInsertIndex = clamp(targetIndex, 0, maxInsertIndex);
+
+  if (nextInsertIndex === currentInsertIndex) return false;
+
+  remaining.splice(nextInsertIndex, 0, ...moving);
+  state.pages = remaining;
+  state.lastSelectedIndex = state.pages.findIndex((page) => page.id === state.selectedPageId);
+  return true;
+}
+
+function moveSelectedPagesToEdge(state, edge) {
+  if (state.selectedPageIds.size === 0) return false;
+
+  const selectedIds = new Set(state.selectedPageIds);
+  const moving = state.pages.filter((page) => selectedIds.has(page.id));
+  const remaining = state.pages.filter((page) => !selectedIds.has(page.id));
+  const currentFirstIndex = state.pages.findIndex((page) => selectedIds.has(page.id));
+  const nextPages = edge === 'end' ? [...remaining, ...moving] : [...moving, ...remaining];
+
+  const nextFirstIndex = nextPages.findIndex((page) => selectedIds.has(page.id));
+  if (nextFirstIndex === currentFirstIndex) return false;
+
+  state.pages = nextPages;
+  state.lastSelectedIndex = state.pages.findIndex((page) => page.id === state.selectedPageId);
+  return true;
+}
+
 export function createApp(root) {
   if (!root) {
     throw new Error('App root element was not found.');
@@ -185,6 +227,15 @@ export function createApp(root) {
     }
     context.state.contextMenu = null;
     setStatus(context, `${context.state.selectedPageIds.size}ページを選択しました。`);
+  };
+
+  context.actions.jumpToPage = (pageId) => {
+    if (!context.state.pages.some((page) => page.id === pageId)) return;
+    selectOnly(context.state, pageId);
+    context.state.scrollToPageId = pageId;
+    context.state.contextMenu = null;
+    const pageIndex = context.state.pages.findIndex((page) => page.id === pageId);
+    setStatus(context, `${pageIndex + 1}ページ目へ移動しました。`);
   };
 
   context.actions.clearSelection = () => {
@@ -271,6 +322,54 @@ export function createApp(root) {
     }
     applySelectionState(context.state);
     setStatus(context, 'ページ順を変更しました。');
+  };
+
+  context.actions.moveSelectedToPageNumber = (pageNumber) => {
+    if (context.state.selectedPageIds.size === 0) return;
+    const targetPageNumber = Number(pageNumber);
+    if (!Number.isInteger(targetPageNumber) || targetPageNumber < 1 || targetPageNumber > context.state.pages.length) {
+      setStatus(context, `1〜${context.state.pages.length}のページ番号を入力してください。`);
+      return;
+    }
+
+    pushHistory(context);
+    const changed = moveSelectedPagesToIndex(context.state, targetPageNumber - 1);
+    if (!changed) {
+      context.state.history.undo.pop();
+      setStatus(context, '指定した位置には移動できません。');
+      return;
+    }
+    applySelectionState(context.state);
+    context.state.scrollToPageId = context.state.selectedPageId;
+    const firstIndex = context.state.pages.findIndex((page) => context.state.selectedPageIds.has(page.id));
+    setStatus(context, `${context.state.selectedPageIds.size}ページを${firstIndex + 1}ページ目へ移動しました。`);
+  };
+
+  context.actions.moveSelectedToEdge = (edge) => {
+    if (context.state.selectedPageIds.size === 0) return;
+    pushHistory(context);
+    const changed = moveSelectedPagesToEdge(context.state, edge);
+    if (!changed) {
+      context.state.history.undo.pop();
+      setStatus(context, 'これ以上移動できません。');
+      return;
+    }
+    applySelectionState(context.state);
+    context.state.scrollToPageId = context.state.selectedPageId;
+    setStatus(context, `${context.state.selectedPageIds.size}ページを${edge === 'start' ? '先頭' : '末尾'}へ移動しました。`);
+  };
+
+  context.actions.promptMoveSelectedToPage = () => {
+    if (context.state.selectedPageIds.size === 0) return;
+    const currentIndex = context.state.pages.findIndex((page) => page.id === context.state.selectedPageId);
+    const defaultValue = currentIndex >= 0 ? String(currentIndex + 1) : '1';
+    const input = window.prompt(`移動先のページ番号を入力してください。`, defaultValue);
+    if (input === null) {
+      setStatus(context, 'ページ移動をキャンセルしました。');
+      return;
+    }
+    const pageNumber = Number.parseInt(input, 10);
+    context.actions.moveSelectedToPageNumber(pageNumber);
   };
 
   context.actions.undo = () => {

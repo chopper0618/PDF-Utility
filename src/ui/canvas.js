@@ -92,6 +92,53 @@ function getDropPosition(card, event) {
   return event.clientX < rect.left + rect.width / 2 ? 'before' : 'after';
 }
 
+function createAutoScroller(scrollContainer) {
+  const threshold = 96;
+  const maxSpeed = 24;
+  let speed = 0;
+  let frameId = null;
+
+  const stop = () => {
+    speed = 0;
+    if (frameId !== null) {
+      cancelAnimationFrame(frameId);
+      frameId = null;
+    }
+  };
+
+  const tick = () => {
+    if (speed === 0) {
+      frameId = null;
+      return;
+    }
+    scrollContainer.scrollTop += speed;
+    frameId = requestAnimationFrame(tick);
+  };
+
+  const update = (event) => {
+    const rect = scrollContainer.getBoundingClientRect();
+    const distanceToTop = event.clientY - rect.top;
+    const distanceToBottom = rect.bottom - event.clientY;
+
+    if (distanceToTop >= 0 && distanceToTop < threshold) {
+      speed = -Math.ceil(((threshold - distanceToTop) / threshold) * maxSpeed);
+    } else if (distanceToBottom >= 0 && distanceToBottom < threshold) {
+      speed = Math.ceil(((threshold - distanceToBottom) / threshold) * maxSpeed);
+    } else {
+      speed = 0;
+    }
+
+    if (speed !== 0 && frameId === null) {
+      frameId = requestAnimationFrame(tick);
+    }
+    if (speed === 0 && frameId !== null) {
+      stop();
+    }
+  };
+
+  return { update, stop };
+}
+
 export function renderCanvas(root, context) {
   const pages = context.state.pages;
   root.innerHTML = `
@@ -138,6 +185,24 @@ export function renderCanvas(root, context) {
     context.actions.setZoom(event.target.value);
   });
 
+  const canvasContent = root.querySelector('.canvas__content');
+  const autoScroller = canvasContent ? createAutoScroller(canvasContent) : null;
+
+  canvasContent?.addEventListener('dragover', (event) => {
+    if (event.dataTransfer?.types?.includes('Files')) return;
+    event.preventDefault();
+    event.stopPropagation();
+    autoScroller?.update(event);
+  });
+  canvasContent?.addEventListener('dragleave', (event) => {
+    if (!canvasContent.contains(event.relatedTarget)) {
+      autoScroller?.stop();
+    }
+  });
+  canvasContent?.addEventListener('drop', () => {
+    autoScroller?.stop();
+  });
+
   root.querySelectorAll('.thumbnail-card').forEach((card) => {
     card.addEventListener('click', (event) => {
       if (event.target.closest('[data-page-action]')) return;
@@ -155,14 +220,18 @@ export function renderCanvas(root, context) {
     });
     card.addEventListener('dragstart', (event) => {
       event.dataTransfer.setData('text/plain', card.dataset.pageId);
+      event.dataTransfer.effectAllowed = 'move';
       card.classList.add('thumbnail-card--dragging');
     });
     card.addEventListener('dragend', () => {
       card.classList.remove('thumbnail-card--dragging');
       clearDropIndicators(root);
+      autoScroller?.stop();
     });
     card.addEventListener('dragover', (event) => {
       event.preventDefault();
+      event.stopPropagation();
+      autoScroller?.update(event);
       const position = getDropPosition(card, event);
       clearDropIndicators(root);
       card.dataset.dropPosition = position;
@@ -175,6 +244,8 @@ export function renderCanvas(root, context) {
     });
     card.addEventListener('drop', (event) => {
       event.preventDefault();
+      event.stopPropagation();
+      autoScroller?.stop();
       const position = card.dataset.dropPosition ?? 'before';
       clearDropIndicators(root);
       context.actions.reorderPage(event.dataTransfer.getData('text/plain'), card.dataset.pageId, position);

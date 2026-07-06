@@ -1036,3 +1036,122 @@
   max-height: none;
   object-fit: contain;
 }
+
+/* Sprint 0.7.0 / Issue #14: Page Map */
+.page-map {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-3);
+}
+
+.page-map__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-muted);
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+.page-map__summary strong {
+  color: var(--color-text);
+  font-size: 13px;
+}
+
+.page-map__list {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.page-map__item {
+  min-width: 0;
+}
+
+.page-map__button {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: 42px;
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.page-map__button:hover {
+  border-color: var(--color-border);
+  background: var(--color-surface-muted);
+}
+
+.page-map__item--active .page-map__button {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.page-map__number {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--color-surface-muted);
+  color: var(--color-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.page-map__item--active .page-map__number {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.page-map__text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.page-map__file,
+.page-map__meta {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.page-map__file {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.page-map__meta {
+  color: var(--color-muted);
+  font-size: 11px;
+}
+
+.page-map__badge {
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: var(--color-surface-muted);
+  color: var(--color-muted);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.page-map__files {
+  display: grid;
+  gap: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border);
+}
