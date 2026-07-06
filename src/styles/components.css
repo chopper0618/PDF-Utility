@@ -1569,10 +1569,55 @@
   animation: spin 1s linear infinite;
 }
 
-.preview-card__hint {
+.preview-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
   padding: var(--space-3) var(--space-5);
   border-top: 1px solid var(--color-border);
   background: var(--color-surface);
+}
+
+.preview-card__footer .preview-card__hint {
+  padding: 0;
+  border-top: 0;
+  background: transparent;
+}
+
+.preview-card__nav {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 0 0 auto;
+}
+
+.preview-card__nav-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 84px;
+  height: 34px;
+  padding: 0 var(--space-3);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.preview-card__nav-button .material-symbols-outlined {
+  font-size: 18px;
+}
+
+@media (max-width: 720px) {
+  .preview-card__footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .preview-card__nav {
+    justify-content: flex-end;
+  }
 }
 
 @keyframes spin {

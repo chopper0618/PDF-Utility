@@ -30,6 +30,12 @@ function handleShortcut(event, context) {
   }
 
   if (context.state.previewPageId) {
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      event.preventDefault();
+      context.actions.previewAdjacentPage(event.key === 'ArrowRight' ? 1 : -1);
+      return;
+    }
+
     if (event.key === 'Delete' || event.key === 'Backspace' || modifier) {
       event.preventDefault();
     }
@@ -192,6 +198,8 @@ function renderPreviewDialog(context) {
 
   const currentIndex = context.state.pages.findIndex((item) => item.id === pageId);
   const title = `${currentIndex + 1}ページ目プレビュー`;
+  const hasPrevious = currentIndex > 0;
+  const hasNext = currentIndex < context.state.pages.length - 1;
   const imageUrl = context.state.previewImageUrl || page.thumbnailUrl;
   const imageContent = context.state.previewLoading
     ? `<div class="preview-card__loading" role="status">
@@ -221,7 +229,19 @@ function renderPreviewDialog(context) {
         <div class="preview-card__body">
           ${imageContent}
         </div>
-        <p class="preview-card__hint">Esc / 背景クリック / × で閉じます。</p>
+        <div class="preview-card__footer">
+          <p class="preview-card__hint">← → で前後ページ / Esc・背景クリック・× で閉じます。</p>
+          <div class="preview-card__nav" aria-label="プレビュー内ページ移動">
+            <button class="secondary-button preview-card__nav-button" type="button" data-preview-prev ${hasPrevious ? '' : 'disabled'}>
+              <span class="material-symbols-outlined" aria-hidden="true">chevron_left</span>
+              前へ
+            </button>
+            <button class="secondary-button preview-card__nav-button" type="button" data-preview-next ${hasNext ? '' : 'disabled'}>
+              次へ
+              <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>
+            </button>
+          </div>
+        </div>
       </section>
     </div>
   `;
@@ -233,6 +253,14 @@ function bindPreview(root, context) {
 
   modalRoot.querySelectorAll('[data-preview-close]').forEach((button) => {
     button.addEventListener('click', () => context.actions.closePreview());
+  });
+
+  modalRoot.querySelector('[data-preview-prev]')?.addEventListener('click', () => {
+    context.actions.previewAdjacentPage(-1);
+  });
+
+  modalRoot.querySelector('[data-preview-next]')?.addEventListener('click', () => {
+    context.actions.previewAdjacentPage(1);
   });
 
   const backdrop = modalRoot.querySelector('[data-preview-backdrop]');

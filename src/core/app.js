@@ -523,6 +523,32 @@ export function createApp(root) {
     }
   };
 
+  context.actions.previewAdjacentPage = (direction) => {
+    if (!context.state.previewPageId) return;
+
+    const currentIndex = context.state.pages.findIndex((page) => page.id === context.state.previewPageId);
+    if (currentIndex < 0) {
+      context.actions.closePreview();
+      return;
+    }
+
+    const nextIndex = currentIndex + Math.sign(Number(direction) || 0);
+    if (nextIndex < 0) {
+      setStatus(context, '先頭ページをプレビュー表示中です。');
+      return;
+    }
+    if (nextIndex >= context.state.pages.length) {
+      setStatus(context, '最終ページをプレビュー表示中です。');
+      return;
+    }
+
+    const nextPageId = context.state.pages[nextIndex]?.id;
+    if (nextPageId) {
+      context.state.scrollToPageId = nextPageId;
+      context.actions.openPreviewPage(nextPageId);
+    }
+  };
+
   context.actions.closePreview = () => {
     if (!context.state.previewPageId) return;
     context.state.previewPageId = null;
