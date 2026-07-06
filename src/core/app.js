@@ -465,6 +465,9 @@ export function createApp(root) {
     restoreSnapshot(context.state, snap);
     context.state.contextMenu = null;
     context.state.dialog = null;
+    context.state.previewPageId = null;
+    context.state.previewImageUrl = null;
+    context.state.previewLoading = false;
     context.state.scrollToPageId = context.state.selectedPageId;
     setStatus(context, `${label}を元に戻しました。Redoでやり直せます。`);
   };
@@ -481,8 +484,51 @@ export function createApp(root) {
     restoreSnapshot(context.state, snap);
     context.state.contextMenu = null;
     context.state.dialog = null;
+    context.state.previewPageId = null;
+    context.state.previewImageUrl = null;
+    context.state.previewLoading = false;
     context.state.scrollToPageId = context.state.selectedPageId;
     setStatus(context, `${label}をやり直しました。Undoで元に戻せます。`);
+  };
+
+
+  context.actions.openPreviewPage = async (pageId) => {
+    const page = context.state.pages.find((item) => item.id === pageId);
+    if (!page) return;
+
+    selectOnly(context.state, pageId);
+    context.state.previewPageId = pageId;
+    context.state.previewImageUrl = null;
+    context.state.previewLoading = true;
+    context.state.contextMenu = null;
+    context.state.dialog = null;
+    const index = context.state.pages.findIndex((item) => item.id === pageId);
+    setStatus(context, `${index + 1}ページ目をプレビュー表示しています。Escで閉じられます。`);
+
+    try {
+      const file = context.state.files.find((item) => item.id === page.fileId);
+      if (!file?.pdfDocument) throw new Error('元PDFが見つかりません。');
+      const preview = await renderPageThumbnail(file.pdfDocument, page.originalPageNumber, 1100);
+
+      if (context.state.previewPageId !== pageId) return;
+      context.state.previewImageUrl = preview.dataUrl;
+      context.state.previewLoading = false;
+      requestRender(context.eventBus);
+    } catch (error) {
+      console.error(error);
+      if (context.state.previewPageId !== pageId) return;
+      context.state.previewImageUrl = page.thumbnailUrl;
+      context.state.previewLoading = false;
+      setStatus(context, `プレビュー生成エラー: ${error.message}`);
+    }
+  };
+
+  context.actions.closePreview = () => {
+    if (!context.state.previewPageId) return;
+    context.state.previewPageId = null;
+    context.state.previewImageUrl = null;
+    context.state.previewLoading = false;
+    setStatus(context, 'プレビューを閉じました。');
   };
 
 

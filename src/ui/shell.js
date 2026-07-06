@@ -23,6 +23,19 @@ function handleShortcut(event, context) {
   const key = event.key.toLowerCase();
   const modifier = event.metaKey || event.ctrlKey;
 
+  if (event.key === 'Escape' && context.state.previewPageId) {
+    event.preventDefault();
+    context.actions.closePreview();
+    return;
+  }
+
+  if (context.state.previewPageId) {
+    if (event.key === 'Delete' || event.key === 'Backspace' || modifier) {
+      event.preventDefault();
+    }
+    return;
+  }
+
   if (event.key === 'Escape' && context.state.dialog) {
     event.preventDefault();
     context.actions.closeDialog();
@@ -165,6 +178,69 @@ function renderDialog(context) {
   return '';
 }
 
+function getPreviewImageStyle(page) {
+  const rotation = ((Number(page.rotation) % 360) + 360) % 360;
+  return `transform: rotate(${rotation}deg);`;
+}
+
+function renderPreviewDialog(context) {
+  const pageId = context.state.previewPageId;
+  if (!pageId) return '';
+
+  const page = context.state.pages.find((item) => item.id === pageId);
+  if (!page) return '';
+
+  const currentIndex = context.state.pages.findIndex((item) => item.id === pageId);
+  const title = `${currentIndex + 1}ページ目プレビュー`;
+  const imageUrl = context.state.previewImageUrl || page.thumbnailUrl;
+  const imageContent = context.state.previewLoading
+    ? `<div class="preview-card__loading" role="status">
+        <span class="material-symbols-outlined" aria-hidden="true">progress_activity</span>
+        <strong>プレビューを生成中...</strong>
+      </div>`
+    : `<img class="preview-card__image" src="${imageUrl}" alt="${escapeHtml(page.fileName)} P.${page.originalPageNumber}" style="${getPreviewImageStyle(page)}" />`;
+
+  return `
+    <div class="modal-backdrop modal-backdrop--preview" data-preview-backdrop>
+      <section class="preview-card" role="dialog" aria-modal="true" aria-labelledby="preview-title">
+        <div class="preview-card__header">
+          <div class="preview-card__title-block">
+            <span class="preview-card__eyebrow">Thumbnail Preview</span>
+            <h2 id="preview-title">${escapeHtml(title)}</h2>
+            <p class="preview-card__file-name" title="${escapeHtml(page.fileName)}">${escapeHtml(page.fileName)}</p>
+            <div class="preview-card__meta-grid" aria-label="ページ情報">
+              <span><strong>現在</strong>P.${currentIndex + 1}</span>
+              <span><strong>元ページ</strong>P.${page.originalPageNumber}</span>
+              <span><strong>回転</strong>${page.rotation}°</span>
+            </div>
+          </div>
+          <button class="modal-card__close" type="button" data-preview-close aria-label="閉じる">
+            <span class="material-symbols-outlined" aria-hidden="true">close</span>
+          </button>
+        </div>
+        <div class="preview-card__body">
+          ${imageContent}
+        </div>
+        <p class="preview-card__hint">Esc / 背景クリック / × で閉じます。</p>
+      </section>
+    </div>
+  `;
+}
+
+function bindPreview(root, context) {
+  const modalRoot = root.querySelector('#modal-root');
+  if (!modalRoot) return;
+
+  modalRoot.querySelectorAll('[data-preview-close]').forEach((button) => {
+    button.addEventListener('click', () => context.actions.closePreview());
+  });
+
+  const backdrop = modalRoot.querySelector('[data-preview-backdrop]');
+  backdrop?.addEventListener('click', (event) => {
+    if (event.target === backdrop) context.actions.closePreview();
+  });
+}
+
 function bindDialog(root, context) {
   const modalRoot = root.querySelector('#modal-root');
   if (!modalRoot) return;
@@ -246,8 +322,9 @@ export function renderShell(root, context) {
 
     const modalRoot = document.querySelector('#modal-root');
     if (modalRoot) {
-      modalRoot.innerHTML = renderDialog(context);
+      modalRoot.innerHTML = renderDialog(context) || renderPreviewDialog(context);
       bindDialog(root, context);
+      bindPreview(root, context);
     }
 
     const nextCanvasContent = document.querySelector('#canvas .canvas__content');

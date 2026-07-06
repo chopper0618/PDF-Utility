@@ -214,6 +214,11 @@ export function renderCanvas(root, context) {
       if (event.target.closest('[data-page-action]')) return;
       context.actions.selectPage(card.dataset.pageId, event);
     });
+    card.addEventListener('dblclick', (event) => {
+      if (event.target.closest('[data-page-action]')) return;
+      event.preventDefault();
+      context.actions.openPreviewPage(card.dataset.pageId);
+    });
     card.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
