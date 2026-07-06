@@ -18,6 +18,11 @@ function setStatus(context, message) {
   requestRender(context.eventBus);
 }
 
+function getSelectedPagePosition(state) {
+  const index = state.pages.findIndex((page) => page.id === state.selectedPageId);
+  return index >= 0 ? index + 1 : 1;
+}
+
 function clonePages(pages) {
   return pages.map((page) => ({ ...page, selected: false }));
 }
@@ -325,11 +330,11 @@ export function createApp(root) {
   };
 
   context.actions.moveSelectedToPageNumber = (pageNumber) => {
-    if (context.state.selectedPageIds.size === 0) return;
+    if (context.state.selectedPageIds.size === 0) return false;
     const targetPageNumber = Number(pageNumber);
     if (!Number.isInteger(targetPageNumber) || targetPageNumber < 1 || targetPageNumber > context.state.pages.length) {
       setStatus(context, `1〜${context.state.pages.length}のページ番号を入力してください。`);
-      return;
+      return false;
     }
 
     pushHistory(context);
@@ -337,12 +342,13 @@ export function createApp(root) {
     if (!changed) {
       context.state.history.undo.pop();
       setStatus(context, '指定した位置には移動できません。');
-      return;
+      return false;
     }
     applySelectionState(context.state);
     context.state.scrollToPageId = context.state.selectedPageId;
     const firstIndex = context.state.pages.findIndex((page) => context.state.selectedPageIds.has(page.id));
     setStatus(context, `${context.state.selectedPageIds.size}ページを${firstIndex + 1}ページ目へ移動しました。`);
+    return true;
   };
 
   context.actions.moveSelectedToEdge = (edge) => {
@@ -361,14 +367,41 @@ export function createApp(root) {
 
   context.actions.promptMoveSelectedToPage = () => {
     if (context.state.selectedPageIds.size === 0) return;
-    const currentIndex = context.state.pages.findIndex((page) => page.id === context.state.selectedPageId);
-    const defaultValue = currentIndex >= 0 ? String(currentIndex + 1) : '1';
-    const input = window.prompt(`移動先のページ番号を入力してください。`, defaultValue);
-    if (input === null) {
-      setStatus(context, 'ページ移動をキャンセルしました。');
+    context.state.dialog = {
+      type: 'move-to-page',
+      value: String(getSelectedPagePosition(context.state)),
+      error: '',
+    };
+    context.state.contextMenu = null;
+    requestRender(context.eventBus);
+  };
+
+  context.actions.closeDialog = () => {
+    if (!context.state.dialog) return;
+    context.state.dialog = null;
+    setStatus(context, 'ページ移動をキャンセルしました。');
+  };
+
+  context.actions.submitMoveToPageDialog = (value) => {
+    if (context.state.selectedPageIds.size === 0) {
+      context.state.dialog = null;
+      requestRender(context.eventBus);
       return;
     }
-    const pageNumber = Number.parseInt(input, 10);
+
+    const inputText = String(value ?? '').trim();
+    const pageNumber = Number.parseInt(inputText, 10);
+    if (!/^\d+$/.test(inputText) || pageNumber < 1 || pageNumber > context.state.pages.length) {
+      context.state.dialog = {
+        type: 'move-to-page',
+        value: inputText,
+        error: `1〜${context.state.pages.length}のページ番号を入力してください。`,
+      };
+      requestRender(context.eventBus);
+      return;
+    }
+
+    context.state.dialog = null;
     context.actions.moveSelectedToPageNumber(pageNumber);
   };
 

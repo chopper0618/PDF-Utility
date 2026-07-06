@@ -4,9 +4,25 @@ import { renderCanvas } from './canvas.js';
 import { renderProperties } from './properties.js';
 import { renderStatusBar } from './statusbar.js';
 
+function isEditableTarget(target) {
+  if (!(target instanceof HTMLElement)) return false;
+
+  return Boolean(target.closest('input, textarea, select, [contenteditable="true"], [contenteditable=""]'));
+}
+
 function handleShortcut(event, context) {
   const key = event.key.toLowerCase();
   const modifier = event.metaKey || event.ctrlKey;
+
+  if (event.key === 'Escape' && context.state.dialog) {
+    event.preventDefault();
+    context.actions.closeDialog();
+    return;
+  }
+
+  if (isEditableTarget(event.target)) {
+    return;
+  }
 
   if (modifier && key === 'a') {
     event.preventDefault();
@@ -40,6 +56,90 @@ function handleShortcut(event, context) {
   }
 }
 
+function renderDialog(context) {
+  const dialog = context.state.dialog;
+  if (!dialog) return '';
+
+  if (dialog.type === 'move-to-page') {
+    const maxPage = context.state.pages.length;
+    const selectedCount = context.state.selectedPageIds.size;
+    const value = dialog.value ?? '1';
+    const error = dialog.error ?? '';
+
+    return `
+      <div class="modal-backdrop" data-dialog-backdrop>
+        <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="move-dialog-title">
+          <form data-dialog-form="move-to-page">
+            <div class="modal-card__header">
+              <div>
+                <h2 id="move-dialog-title">指定ページへ移動</h2>
+                <p>${selectedCount}ページを、指定したページ番号へ移動します。</p>
+              </div>
+              <button class="modal-card__close" type="button" data-dialog-cancel aria-label="閉じる">
+                <span class="material-symbols-outlined" aria-hidden="true">close</span>
+              </button>
+            </div>
+
+            <label class="field-row" for="move-to-page-input">
+              <span class="field-row__label">移動先ページ</span>
+              <input
+                id="move-to-page-input"
+                name="pageNumber"
+                type="number"
+                min="1"
+                max="${maxPage}"
+                step="1"
+                value="${value}"
+                inputmode="numeric"
+                autocomplete="off"
+              />
+            </label>
+
+            <p class="modal-card__hint">入力範囲: 1〜${maxPage}</p>
+            ${error ? `<p class="modal-card__error" role="alert">${error}</p>` : ''}
+
+            <div class="modal-card__actions">
+              <button class="secondary-button" type="button" data-dialog-cancel>キャンセル</button>
+              <button class="primary-action-button" type="submit">移動</button>
+            </div>
+          </form>
+        </section>
+      </div>
+    `;
+  }
+
+  return '';
+}
+
+function bindDialog(root, context) {
+  const modalRoot = root.querySelector('#modal-root');
+  if (!modalRoot) return;
+
+  modalRoot.querySelectorAll('[data-dialog-cancel]').forEach((button) => {
+    button.addEventListener('click', () => context.actions.closeDialog());
+  });
+
+  const backdrop = modalRoot.querySelector('[data-dialog-backdrop]');
+  backdrop?.addEventListener('click', (event) => {
+    if (event.target === backdrop) context.actions.closeDialog();
+  });
+
+  const form = modalRoot.querySelector('[data-dialog-form="move-to-page"]');
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    context.actions.submitMoveToPageDialog(formData.get('pageNumber'));
+  });
+
+  const input = modalRoot.querySelector('#move-to-page-input');
+  if (input) {
+    window.requestAnimationFrame(() => {
+      input.focus();
+      input.select();
+    });
+  }
+}
+
 export function renderShell(root, context) {
   root.innerHTML = `
     <div class="app-shell" id="app-shell">
@@ -69,6 +169,7 @@ export function renderShell(root, context) {
 
       <footer class="status-bar" id="statusbar"></footer>
     </div>
+    <div id="modal-root"></div>
   `;
 
   const renderAll = () => {
@@ -81,6 +182,12 @@ export function renderShell(root, context) {
     renderCanvas(document.querySelector('#canvas'), context);
     renderProperties(document.querySelector('#properties'), context);
     renderStatusBar(document.querySelector('#statusbar'), context);
+
+    const modalRoot = document.querySelector('#modal-root');
+    if (modalRoot) {
+      modalRoot.innerHTML = renderDialog(context);
+      bindDialog(root, context);
+    }
 
     const nextCanvasContent = document.querySelector('#canvas .canvas__content');
     if (nextCanvasContent && context.state.pages.length > 0) {
@@ -114,7 +221,7 @@ export function renderShell(root, context) {
     context.actions.addPdfFiles(event.dataTransfer.files);
   });
   shell.addEventListener('click', (event) => {
-    if (!event.target.closest('.context-menu')) {
+    if (!event.target.closest('.context-menu') && !event.target.closest('.modal-card')) {
       context.actions.closeContextMenu();
     }
   });

@@ -24,6 +24,7 @@ export const appState = {
     limit: 50,
   },
   contextMenu: null,
+  dialog: null,
   scrollToPageId: null,
 };
 
