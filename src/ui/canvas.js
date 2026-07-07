@@ -1,7 +1,35 @@
-function renderThumbnail(page, index) {
+import { escapeHtml, renderTwoLineFileName } from './fileName.js';
+
+
+function normalizeRotation(rotation) {
+  return ((Number(rotation) % 360) + 360) % 360;
+}
+
+function getThumbnailImageStyle(page, zoom) {
+  const rotation = normalizeRotation(page.rotation);
+  const pageWidth = Math.max(1, Number(page.width) || 1);
+  const pageHeight = Math.max(1, Number(page.height) || 1);
+  const availableSize = Math.max(72, Number(zoom) - 16);
+  const isSideways = rotation === 90 || rotation === 270;
+
+  const fitScale = isSideways
+    ? Math.min(availableSize / pageHeight, availableSize / pageWidth)
+    : Math.min(availableSize / pageWidth, availableSize / pageHeight);
+
+  const displayWidth = Math.max(1, Math.floor(pageWidth * fitScale));
+  const displayHeight = Math.max(1, Math.floor(pageHeight * fitScale));
+
+  return [
+    `width: ${displayWidth}px`,
+    `height: ${displayHeight}px`,
+    `transform: rotate(${rotation}deg)`,
+  ].join('; ');
+}
+
+function renderThumbnail(page, index, zoom) {
   const duplicateLabel = page.duplicateOf ? '<span class="thumbnail-card__tag">複製</span>' : '';
   return `
-    <article class="thumbnail-card ${page.selected ? 'thumbnail-card--selected' : ''}" draggable="true" tabindex="0" data-page-id="${page.id}">
+    <article class="thumbnail-card ${page.selected ? 'thumbnail-card--selected' : ''}" draggable="true" tabindex="0" data-page-id="${page.id}" title="${escapeHtml(page.fileName)}">
       <div class="thumbnail-card__header">
         <span class="thumbnail-card__number">${index + 1}</span>
         ${duplicateLabel}
@@ -21,10 +49,14 @@ function renderThumbnail(page, index) {
         </button>
       </div>
       <div class="thumbnail-card__image-wrap">
-        <img style="transform: rotate(${page.rotation}deg)" src="${page.thumbnailUrl}" alt="${page.fileName} P.${page.originalPageNumber}" />
+        <img class="thumbnail-card__image" style="${getThumbnailImageStyle(page, zoom)}" src="${page.thumbnailUrl}" alt="${escapeHtml(page.fileName)} P.${page.originalPageNumber}" />
       </div>
       <div class="thumbnail-card__meta">
-        <span class="thumbnail-card__file" title="${page.fileName}">${page.fileName}</span>
+        ${renderTwoLineFileName(page.fileName, 'thumbnail-card__file', {
+          maxHeadLength: 13,
+          maxTailLength: 14,
+          splitThreshold: 22,
+        })}
         <span>元 P.${page.originalPageNumber} / 回転 ${page.rotation}°</span>
       </div>
     </article>
@@ -66,6 +98,53 @@ function getDropPosition(card, event) {
   return event.clientX < rect.left + rect.width / 2 ? 'before' : 'after';
 }
 
+function createAutoScroller(scrollContainer) {
+  const threshold = 96;
+  const maxSpeed = 24;
+  let speed = 0;
+  let frameId = null;
+
+  const stop = () => {
+    speed = 0;
+    if (frameId !== null) {
+      cancelAnimationFrame(frameId);
+      frameId = null;
+    }
+  };
+
+  const tick = () => {
+    if (speed === 0) {
+      frameId = null;
+      return;
+    }
+    scrollContainer.scrollTop += speed;
+    frameId = requestAnimationFrame(tick);
+  };
+
+  const update = (event) => {
+    const rect = scrollContainer.getBoundingClientRect();
+    const distanceToTop = event.clientY - rect.top;
+    const distanceToBottom = rect.bottom - event.clientY;
+
+    if (distanceToTop >= 0 && distanceToTop < threshold) {
+      speed = -Math.ceil(((threshold - distanceToTop) / threshold) * maxSpeed);
+    } else if (distanceToBottom >= 0 && distanceToBottom < threshold) {
+      speed = Math.ceil(((threshold - distanceToBottom) / threshold) * maxSpeed);
+    } else {
+      speed = 0;
+    }
+
+    if (speed !== 0 && frameId === null) {
+      frameId = requestAnimationFrame(tick);
+    }
+    if (speed === 0 && frameId !== null) {
+      stop();
+    }
+  };
+
+  return { update, stop };
+}
+
 export function renderCanvas(root, context) {
   const pages = context.state.pages;
   root.innerHTML = `
@@ -98,10 +177,10 @@ export function renderCanvas(root, context) {
                 <span class="material-symbols-outlined welcome-card__icon" aria-hidden="true">picture_as_pdf</span>
                 <h1>PDF Utility</h1>
                 <p>PDFを追加して、ページの整理・結合・出力を行います。</p>
-                <p class="muted">v0.4.4-alphaではホバーUIとサムネイル拡大表示を改善しました。</p>
+                <p class="muted">v0.4.3-alphaではホバー操作・選択表示・サムネイルサイズ変更を改善しました。</p>
               </div>`
             : `<div class="thumbnail-grid">
-                ${pages.map((page, index) => renderThumbnail(page, index)).join('')}
+                ${pages.map((page, index) => renderThumbnail(page, index, context.state.zoom)).join('')}
               </div>`
       }
     </div>
@@ -112,10 +191,33 @@ export function renderCanvas(root, context) {
     context.actions.setZoom(event.target.value);
   });
 
+  const canvasContent = root.querySelector('.canvas__content');
+  const autoScroller = canvasContent ? createAutoScroller(canvasContent) : null;
+
+  canvasContent?.addEventListener('dragover', (event) => {
+    if (event.dataTransfer?.types?.includes('Files')) return;
+    event.preventDefault();
+    event.stopPropagation();
+    autoScroller?.update(event);
+  });
+  canvasContent?.addEventListener('dragleave', (event) => {
+    if (!canvasContent.contains(event.relatedTarget)) {
+      autoScroller?.stop();
+    }
+  });
+  canvasContent?.addEventListener('drop', () => {
+    autoScroller?.stop();
+  });
+
   root.querySelectorAll('.thumbnail-card').forEach((card) => {
     card.addEventListener('click', (event) => {
       if (event.target.closest('[data-page-action]')) return;
       context.actions.selectPage(card.dataset.pageId, event);
+    });
+    card.addEventListener('dblclick', (event) => {
+      if (event.target.closest('[data-page-action]')) return;
+      event.preventDefault();
+      context.actions.openPreviewPage(card.dataset.pageId);
     });
     card.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' || event.key === ' ') {
@@ -129,14 +231,18 @@ export function renderCanvas(root, context) {
     });
     card.addEventListener('dragstart', (event) => {
       event.dataTransfer.setData('text/plain', card.dataset.pageId);
+      event.dataTransfer.effectAllowed = 'move';
       card.classList.add('thumbnail-card--dragging');
     });
     card.addEventListener('dragend', () => {
       card.classList.remove('thumbnail-card--dragging');
       clearDropIndicators(root);
+      autoScroller?.stop();
     });
     card.addEventListener('dragover', (event) => {
       event.preventDefault();
+      event.stopPropagation();
+      autoScroller?.update(event);
       const position = getDropPosition(card, event);
       clearDropIndicators(root);
       card.dataset.dropPosition = position;
@@ -149,6 +255,8 @@ export function renderCanvas(root, context) {
     });
     card.addEventListener('drop', (event) => {
       event.preventDefault();
+      event.stopPropagation();
+      autoScroller?.stop();
       const position = card.dataset.dropPosition ?? 'before';
       clearDropIndicators(root);
       context.actions.reorderPage(event.dataTransfer.getData('text/plain'), card.dataset.pageId, position);

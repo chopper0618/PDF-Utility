@@ -9,13 +9,14 @@ function getInitialZoom() {
 }
 
 export const appState = {
-  version: '0.5.0-alpha',
+  version: '0.8.5-alpha',
   files: [],
   pages: [],
   selectedPageIds: new Set(),
   selectedPageId: null,
   lastSelectedIndex: null,
   status: 'Ready',
+  statusTone: 'default',
   isLoading: false,
   zoom: getInitialZoom(),
   history: {
@@ -24,6 +25,13 @@ export const appState = {
     limit: 50,
   },
   contextMenu: null,
+  dialog: null,
+  previewPageId: null,
+  previewImageUrl: null,
+  previewLoading: false,
+  previewZoom: 1,
+  previewFitMode: 'height',
+  scrollToPageId: null,
 };
 
 export function getSelectedPage(state = appState) {

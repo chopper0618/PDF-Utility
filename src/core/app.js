@@ -13,9 +13,15 @@ function requestRender(eventBus) {
   eventBus.emit('state:changed');
 }
 
-function setStatus(context, message) {
+function setStatus(context, message, tone = 'default') {
   context.state.status = message;
+  context.state.statusTone = tone;
   requestRender(context.eventBus);
+}
+
+function getSelectedPagePosition(state) {
+  const index = state.pages.findIndex((page) => page.id === state.selectedPageId);
+  return index >= 0 ? index + 1 : 1;
 }
 
 function clonePages(pages) {
@@ -41,11 +47,22 @@ function restoreSnapshot(state, snap) {
   });
 }
 
-function pushHistory(context) {
+function pushHistory(context, label = '操作') {
   const history = context.state.history;
-  history.undo.push(snapshot(context.state));
+  history.undo.push({
+    label,
+    snapshot: snapshot(context.state),
+  });
   if (history.undo.length > history.limit) history.undo.shift();
   history.redo = [];
+}
+
+function normalizeHistoryEntry(entry) {
+  if (entry?.snapshot) return entry;
+  return {
+    label: '操作',
+    snapshot: entry,
+  };
 }
 
 function applySelectionState(state) {
@@ -86,6 +103,21 @@ function toggleSelection(state, pageId) {
   applySelectionState(state);
 }
 
+function selectPageAtIndex(state, index) {
+  if (state.pages.length === 0) {
+    state.selectedPageIds.clear();
+    state.selectedPageId = null;
+    state.lastSelectedIndex = null;
+    applySelectionState(state);
+    return null;
+  }
+
+  const safeIndex = clamp(index, 0, state.pages.length - 1);
+  const page = state.pages[safeIndex];
+  selectOnly(state, page.id);
+  return page.id;
+}
+
 function getTargetIds(state, pageId = null) {
   if (pageId && !state.selectedPageIds.has(pageId)) return [pageId];
   return Array.from(state.selectedPageIds);
@@ -101,6 +133,48 @@ function reorderPage(state, draggedId, targetId, position = 'before') {
   const insertIndex = position === 'after' ? targetIndex + 1 : targetIndex;
   remaining.splice(insertIndex, 0, ...moving);
   state.pages = remaining;
+  return true;
+}
+
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function moveSelectedPagesToIndex(state, targetIndex) {
+  if (!Number.isInteger(targetIndex) || state.selectedPageIds.size === 0) return false;
+
+  const selectedIds = new Set(state.selectedPageIds);
+  const firstSelectedIndex = state.pages.findIndex((page) => selectedIds.has(page.id));
+  if (firstSelectedIndex < 0) return false;
+
+  const moving = state.pages.filter((page) => selectedIds.has(page.id));
+  const remaining = state.pages.filter((page) => !selectedIds.has(page.id));
+  const currentInsertIndex = state.pages.slice(0, firstSelectedIndex).filter((page) => !selectedIds.has(page.id)).length;
+  const maxInsertIndex = Math.max(0, state.pages.length - moving.length);
+  const nextInsertIndex = clamp(targetIndex, 0, maxInsertIndex);
+
+  if (nextInsertIndex === currentInsertIndex) return false;
+
+  remaining.splice(nextInsertIndex, 0, ...moving);
+  state.pages = remaining;
+  state.lastSelectedIndex = state.pages.findIndex((page) => page.id === state.selectedPageId);
+  return true;
+}
+
+function moveSelectedPagesToEdge(state, edge) {
+  if (state.selectedPageIds.size === 0) return false;
+
+  const selectedIds = new Set(state.selectedPageIds);
+  const moving = state.pages.filter((page) => selectedIds.has(page.id));
+  const remaining = state.pages.filter((page) => !selectedIds.has(page.id));
+  const currentFirstIndex = state.pages.findIndex((page) => selectedIds.has(page.id));
+  const nextPages = edge === 'end' ? [...remaining, ...moving] : [...moving, ...remaining];
+
+  const nextFirstIndex = nextPages.findIndex((page) => selectedIds.has(page.id));
+  if (nextFirstIndex === currentFirstIndex) return false;
+
+  state.pages = nextPages;
+  state.lastSelectedIndex = state.pages.findIndex((page) => page.id === state.selectedPageId);
   return true;
 }
 
@@ -126,7 +200,7 @@ export function createApp(root) {
       return;
     }
 
-    pushHistory(context);
+    pushHistory(context, 'PDF追加');
     context.state.isLoading = true;
     setStatus(context, `${files.length}件のPDFを読み込み中...`);
 
@@ -187,6 +261,15 @@ export function createApp(root) {
     setStatus(context, `${context.state.selectedPageIds.size}ページを選択しました。`);
   };
 
+  context.actions.jumpToPage = (pageId) => {
+    if (!context.state.pages.some((page) => page.id === pageId)) return;
+    selectOnly(context.state, pageId);
+    context.state.scrollToPageId = pageId;
+    context.state.contextMenu = null;
+    const pageIndex = context.state.pages.findIndex((page) => page.id === pageId);
+    setStatus(context, `${pageIndex + 1}ページ目へ移動しました。`);
+  };
+
   context.actions.clearSelection = () => {
     context.state.selectedPageId = null;
     context.state.selectedPageIds.clear();
@@ -216,7 +299,7 @@ export function createApp(root) {
   context.actions.rotateSelected = (degrees, pageId = null) => {
     const targetIds = getTargetIds(context.state, pageId);
     if (targetIds.length === 0) return;
-    pushHistory(context);
+    pushHistory(context, '回転');
     context.state.pages.forEach((page) => {
       if (targetIds.includes(page.id)) {
         page.rotation = (page.rotation + degrees + 360) % 360;
@@ -228,18 +311,19 @@ export function createApp(root) {
   context.actions.deleteSelected = (pageId = null) => {
     const targetIds = getTargetIds(context.state, pageId);
     if (targetIds.length === 0) return;
-    pushHistory(context);
+    const firstTargetIndex = context.state.pages.findIndex((page) => targetIds.includes(page.id));
+    pushHistory(context, '削除');
     context.state.pages = context.state.pages.filter((page) => !targetIds.includes(page.id));
-    context.state.selectedPageIds.clear();
-    context.state.selectedPageId = null;
-    context.state.lastSelectedIndex = null;
-    setStatus(context, `${targetIds.length}ページを削除しました。`);
+    const nextPageId = selectPageAtIndex(context.state, firstTargetIndex);
+    context.state.scrollToPageId = nextPageId;
+    const count = targetIds.length;
+    setStatus(context, `${count}ページを削除しました。Undoで元に戻せます。`, 'danger');
   };
 
   context.actions.duplicateSelected = (pageId = null) => {
     const targetIds = getTargetIds(context.state, pageId);
     if (targetIds.length === 0) return;
-    pushHistory(context);
+    pushHistory(context, '複製');
     const nextPages = [];
     const newIds = [];
     context.state.pages.forEach((page) => {
@@ -259,65 +343,323 @@ export function createApp(root) {
     context.state.selectedPageIds = new Set(newIds);
     context.state.selectedPageId = newIds.at(-1) ?? null;
     applySelectionState(context.state);
+    context.state.scrollToPageId = context.state.selectedPageId;
     setStatus(context, `${newIds.length}ページを複製しました。`);
   };
 
   context.actions.reorderPage = (draggedId, targetId, position = 'before') => {
-    pushHistory(context);
+    const draggedWasSelected = context.state.selectedPageIds.has(draggedId);
+    pushHistory(context, '並び替え');
     const changed = reorderPage(context.state, draggedId, targetId, position);
     if (!changed) {
       context.state.history.undo.pop();
       return;
     }
+    if (!draggedWasSelected && context.state.pages.some((page) => page.id === draggedId)) {
+      selectOnly(context.state, draggedId);
+    } else {
+      applySelectionState(context.state);
+      context.state.lastSelectedIndex = context.state.pages.findIndex((page) => page.id === context.state.selectedPageId);
+    }
+    context.state.scrollToPageId = context.state.selectedPageId ?? draggedId;
+    setStatus(context, 'ページ順を変更しました。Undoで元に戻せます。');
+  };
+
+  context.actions.moveSelectedToPageNumber = (pageNumber) => {
+    if (context.state.selectedPageIds.size === 0) return false;
+    const targetPageNumber = Number(pageNumber);
+    if (!Number.isInteger(targetPageNumber) || targetPageNumber < 1 || targetPageNumber > context.state.pages.length) {
+      setStatus(context, `1〜${context.state.pages.length}のページ番号を入力してください。`);
+      return false;
+    }
+
+    pushHistory(context, '移動');
+    const changed = moveSelectedPagesToIndex(context.state, targetPageNumber - 1);
+    if (!changed) {
+      context.state.history.undo.pop();
+      setStatus(context, '指定した位置には移動できません。');
+      return false;
+    }
     applySelectionState(context.state);
-    setStatus(context, 'ページ順を変更しました。');
+    context.state.scrollToPageId = context.state.selectedPageId;
+    const firstIndex = context.state.pages.findIndex((page) => context.state.selectedPageIds.has(page.id));
+    setStatus(context, `${context.state.selectedPageIds.size}ページを${firstIndex + 1}ページ目へ移動しました。`);
+    return true;
+  };
+
+  context.actions.moveSelectedToEdge = (edge) => {
+    if (context.state.selectedPageIds.size === 0) return;
+    pushHistory(context, '移動');
+    const changed = moveSelectedPagesToEdge(context.state, edge);
+    if (!changed) {
+      context.state.history.undo.pop();
+      setStatus(context, 'これ以上移動できません。');
+      return;
+    }
+    applySelectionState(context.state);
+    context.state.scrollToPageId = context.state.selectedPageId;
+    setStatus(context, `${context.state.selectedPageIds.size}ページを${edge === 'start' ? '先頭' : '末尾'}へ移動しました。`);
+  };
+
+  context.actions.promptMoveSelectedToPage = () => {
+    if (context.state.selectedPageIds.size === 0) return;
+    context.state.dialog = {
+      type: 'move-to-page',
+      value: String(getSelectedPagePosition(context.state)),
+      error: '',
+    };
+    context.state.contextMenu = null;
+    requestRender(context.eventBus);
+  };
+
+  context.actions.closeDialog = () => {
+    if (!context.state.dialog) return;
+    const dialogType = context.state.dialog.type;
+    context.state.dialog = null;
+
+    if (dialogType === 'move-to-page') {
+      setStatus(context, 'ページ移動をキャンセルしました。');
+      return;
+    }
+
+    if (dialogType === 'export-pdf') {
+      setStatus(context, 'PDF作成をキャンセルしました。');
+      return;
+    }
+
+    setStatus(context, 'ダイアログを閉じました。');
+  };
+
+  context.actions.submitMoveToPageDialog = (value) => {
+    if (context.state.selectedPageIds.size === 0) {
+      context.state.dialog = null;
+      requestRender(context.eventBus);
+      return;
+    }
+
+    const inputText = String(value ?? '').trim();
+    const pageNumber = Number.parseInt(inputText, 10);
+    if (!/^\d+$/.test(inputText) || pageNumber < 1 || pageNumber > context.state.pages.length) {
+      context.state.dialog = {
+        type: 'move-to-page',
+        value: inputText,
+        error: `1〜${context.state.pages.length}のページ番号を入力してください。`,
+      };
+      requestRender(context.eventBus);
+      return;
+    }
+
+    context.state.dialog = null;
+    context.actions.moveSelectedToPageNumber(pageNumber);
   };
 
   context.actions.undo = () => {
-    const snap = context.state.history.undo.pop();
-    if (!snap) return;
-    context.state.history.redo.push(snapshot(context.state));
+    const entry = context.state.history.undo.pop();
+    if (!entry) return;
+
+    const { label, snapshot: snap } = normalizeHistoryEntry(entry);
+    context.state.history.redo.push({
+      label,
+      snapshot: snapshot(context.state),
+    });
     restoreSnapshot(context.state, snap);
-    setStatus(context, '元に戻しました。');
+    context.state.contextMenu = null;
+    context.state.dialog = null;
+    context.state.previewPageId = null;
+    context.state.previewImageUrl = null;
+    context.state.previewLoading = false;
+    context.state.previewZoom = 1;
+    context.state.previewFitMode = 'height';
+    context.state.scrollToPageId = context.state.selectedPageId;
+    setStatus(context, `${label}を元に戻しました。Redoでやり直せます。`);
   };
 
   context.actions.redo = () => {
-    const snap = context.state.history.redo.pop();
-    if (!snap) return;
-    context.state.history.undo.push(snapshot(context.state));
+    const entry = context.state.history.redo.pop();
+    if (!entry) return;
+
+    const { label, snapshot: snap } = normalizeHistoryEntry(entry);
+    context.state.history.undo.push({
+      label,
+      snapshot: snapshot(context.state),
+    });
     restoreSnapshot(context.state, snap);
-    setStatus(context, 'やり直しました。');
+    context.state.contextMenu = null;
+    context.state.dialog = null;
+    context.state.previewPageId = null;
+    context.state.previewImageUrl = null;
+    context.state.previewLoading = false;
+    context.state.previewZoom = 1;
+    context.state.previewFitMode = 'height';
+    context.state.scrollToPageId = context.state.selectedPageId;
+    setStatus(context, `${label}をやり直しました。Undoで元に戻せます。`);
+  };
+
+
+  context.actions.openPreviewPage = async (pageId, options = {}) => {
+    const page = context.state.pages.find((item) => item.id === pageId);
+    if (!page) return;
+
+    selectOnly(context.state, pageId);
+    const shouldResetZoom = options.resetZoom ?? !context.state.previewPageId;
+    context.state.previewPageId = pageId;
+    if (shouldResetZoom) {
+      context.state.previewZoom = 1;
+      context.state.previewFitMode = 'height';
+    }
+    context.state.previewImageUrl = null;
+    context.state.previewLoading = true;
+    context.state.contextMenu = null;
+    context.state.dialog = null;
+    const index = context.state.pages.findIndex((item) => item.id === pageId);
+    setStatus(context, `${index + 1}ページ目をプレビュー表示しています。Escで閉じられます。`);
+
+    try {
+      const file = context.state.files.find((item) => item.id === page.fileId);
+      if (!file?.pdfDocument) throw new Error('元PDFが見つかりません。');
+      const preview = await renderPageThumbnail(file.pdfDocument, page.originalPageNumber, 1100, page.rotation);
+
+      if (context.state.previewPageId !== pageId) return;
+      context.state.previewImageUrl = preview.dataUrl;
+      context.state.previewLoading = false;
+      requestRender(context.eventBus);
+    } catch (error) {
+      console.error(error);
+      if (context.state.previewPageId !== pageId) return;
+      context.state.previewImageUrl = page.thumbnailUrl;
+      context.state.previewLoading = false;
+      setStatus(context, `プレビュー生成エラー: ${error.message}`);
+    }
+  };
+
+  context.actions.previewAdjacentPage = (direction) => {
+    if (!context.state.previewPageId) return;
+
+    const currentIndex = context.state.pages.findIndex((page) => page.id === context.state.previewPageId);
+    if (currentIndex < 0) {
+      context.actions.closePreview();
+      return;
+    }
+
+    const nextIndex = currentIndex + Math.sign(Number(direction) || 0);
+    if (nextIndex < 0) {
+      setStatus(context, '先頭ページをプレビュー表示中です。');
+      return;
+    }
+    if (nextIndex >= context.state.pages.length) {
+      setStatus(context, '最終ページをプレビュー表示中です。');
+      return;
+    }
+
+    const nextPageId = context.state.pages[nextIndex]?.id;
+    if (nextPageId) {
+      context.state.scrollToPageId = nextPageId;
+      context.actions.openPreviewPage(nextPageId, { resetZoom: false });
+    }
+  };
+
+  context.actions.zoomPreview = (direction) => {
+    if (!context.state.previewPageId) return;
+    const step = 0.25;
+    const currentZoom = Number(context.state.previewZoom) || 1;
+    const nextZoom = Math.min(3, Math.max(1, currentZoom + Math.sign(Number(direction) || 0) * step));
+    if (nextZoom === currentZoom) return;
+    context.state.previewZoom = nextZoom;
+    const modeLabel = context.state.previewFitMode === 'width' ? '幅フィット基準' : '高さフィット基準';
+    setStatus(context, nextZoom === 1 ? `プレビューを${context.state.previewFitMode === 'width' ? '幅' : '高さ'}に合わせました。` : `プレビュー倍率を${Math.round(nextZoom * 100)}%にしました（${modeLabel}）。`);
+  };
+
+  context.actions.fitPreviewToHeight = () => {
+    if (!context.state.previewPageId) return;
+    context.state.previewFitMode = 'height';
+    context.state.previewZoom = 1;
+    setStatus(context, 'プレビューを高さに合わせました。');
+  };
+
+  context.actions.fitPreviewToWidth = () => {
+    if (!context.state.previewPageId) return;
+    context.state.previewFitMode = 'width';
+    context.state.previewZoom = 1;
+    setStatus(context, 'プレビューを幅に合わせました。');
+  };
+
+  context.actions.closePreview = () => {
+    if (!context.state.previewPageId) return;
+    context.state.previewPageId = null;
+    context.state.previewImageUrl = null;
+    context.state.previewLoading = false;
+    context.state.previewZoom = 1;
+    context.state.previewFitMode = 'height';
+    setStatus(context, 'プレビューを閉じました。');
   };
 
 
 
-  context.actions.exportPdf = async () => {
+  context.actions.promptExportPdf = () => {
     if (context.state.pages.length === 0) {
       setStatus(context, '出力するページがありません。');
       return;
     }
 
-    const suggestedName = getSuggestedOutputFileName(context.state);
-    const inputName = window.prompt('出力ファイル名を入力してください。', suggestedName);
-    if (inputName === null) {
-      setStatus(context, 'PDF作成をキャンセルしました。');
+    context.state.dialog = {
+      type: 'export-pdf',
+      value: getSuggestedOutputFileName(context.state),
+      error: '',
+    };
+    context.state.contextMenu = null;
+    requestRender(context.eventBus);
+  };
+
+  context.actions.exportPdf = async (outputFileName = null) => {
+    if (context.state.pages.length === 0) {
+      setStatus(context, '出力するページがありません。');
       return;
     }
+
+    const safeName = String(outputFileName ?? getSuggestedOutputFileName(context.state)).trim();
+    if (!safeName) {
+      setStatus(context, '出力ファイル名を入力してください。');
+      return;
+    }
+
+    const fileName = safeName.toLowerCase().endsWith('.pdf') ? safeName : `${safeName}.pdf`;
 
     context.state.isLoading = true;
     setStatus(context, 'PDFを作成中...');
 
     try {
       const blob = await createMergedPdfBlob(context.state);
-      downloadBlob(blob, inputName);
-      setStatus(context, `PDFを作成しました: ${context.state.pages.length}ページ`);
+      downloadBlob(blob, fileName);
+      setStatus(context, `PDFを作成しました: ${fileName} / ${context.state.pages.length}ページ`);
     } catch (error) {
       console.error(error);
-      setStatus(context, `PDF作成エラー: ${error.message}`);
+      setStatus(context, `PDF作成エラー: ${error.message}`, 'danger');
     } finally {
       context.state.isLoading = false;
       requestRender(eventBus);
     }
+  };
+
+  context.actions.submitExportPdfDialog = (value) => {
+    if (context.state.pages.length === 0) {
+      context.state.dialog = null;
+      requestRender(context.eventBus);
+      return;
+    }
+
+    const inputText = String(value ?? '').trim();
+    if (!inputText) {
+      context.state.dialog = {
+        type: 'export-pdf',
+        value: inputText,
+        error: '出力ファイル名を入力してください。',
+      };
+      requestRender(context.eventBus);
+      return;
+    }
+
+    context.state.dialog = null;
+    context.actions.exportPdf(inputText);
   };
 
   context.actions.openContextMenu = (pageId, x, y) => {

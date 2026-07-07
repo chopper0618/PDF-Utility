@@ -80,6 +80,21 @@
   font-size: 12px;
 }
 
+.status-bar__message {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-bar__message--danger {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  font-weight: 700;
+}
+
 /* v0.4 Professional UX */
 .app-shell {
   grid-template-rows: 40px 32px 96px 1fr 28px;
