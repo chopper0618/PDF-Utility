@@ -1,3 +1,17 @@
+# Changelog
+
+## Unreleased - Sprint 1.0.2 neutral wording cleanup
+
+### Added
+
+- Added Issue #28 and Sprint 1.0.2 docs for neutral public wording cleanup.
+
+### Changed
+
+- Reworded README and Project Docs so PDF Utility reads as a general-purpose browser-based PDF page utility.
+- Replaced sensitive-content wording with `個人情報` and `所属先の情報管理ルール` in release and Google Sites notes.
+- Updated AI role / product mission wording to avoid tying the product to a specific organization type or specialty.
+
 ## v1.0.1-beta - Sprint 1.0.1 version display sync
 
 ### Added
@@ -14,7 +28,7 @@
 
 - Added a 1.0.0-beta release checklist for deployment, browser, page operation, preview, export, and safety checks.
 - Added known limitations for browser support, file support, export behavior, privacy, performance, and Google Drive non-integration.
-- Added Google Sites listing copy for the department trial link.
+- Added Google Sites listing copy for the trial link.
 
 ### Changed
 

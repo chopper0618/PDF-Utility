@@ -4,7 +4,7 @@
 
 v1.0 は、PDF の読み込み、ページ単位の整理、複数 PDF の結合、書き出しが安定して行える状態を目指す。
 
-派手な機能よりも、まずは「安心してページ操作できること」「画面表示と実際の PDF 構成がズレないこと」「部門内で試用できる説明と制限事項が揃っていること」を優先する。
+派手な機能よりも、まずは「安心してページ操作できること」「画面表示と実際の PDF 構成がズレないこと」「試用できる説明と制限事項が揃っていること」を優先する。
 
 ## Sprint 一覧
 
@@ -25,8 +25,9 @@ v1.0 は、PDF の読み込み、ページ単位の整理、複数 PDF の結合
 | Sprint 0.8.5 | Preview UI polish | 完了 |
 | Sprint 0.9.0 | GitHub Pages trial deployment | 完了 |
 | Sprint 1.0.0 | Release check / beta preparation | 完了 |
-| Sprint 1.0.1 | Version display sync / beta polish | 進行中 |
-| Sprint 1.0.2 | Trial feedback fixes | 候補 |
+| Sprint 1.0.1 | Version display sync / beta polish | 完了 |
+| Sprint 1.0.2 | Neutral wording cleanup | 進行中 |
+| Sprint 1.0.3 | Trial feedback fixes | 候補 |
 | Sprint 1.1.0 | Export error handling | 候補 |
 
 ---
@@ -77,7 +78,7 @@ v1.0 は、PDF の読み込み、ページ単位の整理、複数 PDF の結合
 
 目的:
 
-PDF Utility を **部門内で試用できる 1.0.0-beta 相当** に整える。
+PDF Utility を **業務環境で試用できる 1.0.0-beta 相当** に整える。
 
 Scope:
 
@@ -102,7 +103,7 @@ Non-scope:
 
 ## Sprint 1.0.1: Version display sync / beta polish
 
-進行中。
+完了。
 
 目的:
 
@@ -123,11 +124,36 @@ Non-scope:
 
 ---
 
-## Sprint 1.0.2: Trial feedback fixes
+## Sprint 1.0.2: Neutral wording cleanup
+
+進行中。
+
+目的:
+
+公開リポジトリと Google Sites 掲載文から、特定の利用環境に見える表現を除き、汎用的な PDF ページ編集ツールとして説明を整える。
+
+Scope:
+
+- README の説明文を汎用表現へ整理
+- Project Docs の表現を汎用表現へ整理
+- Google Sites 掲載文を汎用表現へ整理
+- `個人情報` と `所属先の情報管理ルール` を使った注意書きへ統一
+- ブラウザ内処理、Google Drive 連携なし、認証情報なしの説明は維持
+
+Non-scope:
+
+- 機能追加
+- バージョン番号変更
+- アクセス制御の実装
+- `dist` 配下の手動編集
+
+---
+
+## Sprint 1.0.3: Trial feedback fixes
 
 候補。
 
-- 部門内試用で出た軽微な不具合修正
+- 試用で出た軽微な不具合修正
 - Google Sites 掲載文の調整
 - 操作説明の補強
 - Chrome / Edge での表示差異修正
@@ -169,10 +195,10 @@ Non-scope:
 
 ## v1.0 正式版に向けた判断
 
-1.0.0-beta の部門内試用後、次の点を確認して正式版へ進む。
+1.0.0-beta の試用後、次の点を確認して正式版へ進む。
 
 - 試用者が迷わず PDF のページ整理を完了できる
 - 日常的な PDF サイズで速度が許容範囲
 - 保存後 PDF のページ順・回転・削除・複製が期待通り
 - エラー時の説明が不足している箇所が把握できている
-- 患者情報を含む PDF の取り扱い注意が運用上問題ない
+- 個人情報を含む PDF の保存・共有時の注意が運用上問題ない

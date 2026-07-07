@@ -2,7 +2,7 @@
 
 ## 目的
 
-PDF Utility を GitHub Pages で試験公開し、Google Sites からリンクして院内PCで動作確認できる状態にする。
+PDF Utility を GitHub Pages で試験公開し、Google Sites からリンクして実際に利用する PC 環境で動作確認できる状態にする。
 
 ## 背景
 
@@ -19,7 +19,7 @@ GitHub Pages
 ↓
 Google Sites にリンク
 ↓
-院内PCで動作確認
+実際に利用する PC 環境で動作確認
 ```
 
 ## 今回やること
@@ -33,14 +33,14 @@ Google Sites にリンク
 - Google Drive 連携
 - Googleログイン認証
 - APIキーやOAuthクライアントIDの追加
-- GitHub Pages の厳密な部門内限定公開
+- GitHub Pages の厳密な限定公開
 - Google Sites への iframe 埋め込み最適化
 
 ## 公開範囲の注意
 
-通常の GitHub Pages は公開URLを知っていればアクセスできる。Google Sites 側を部門内限定にしても、リンク先の GitHub Pages 自体が公開URLであれば完全なアクセス制限にはならない。
+通常の GitHub Pages は公開URLを知っていればアクセスできる。Google Sites 側を限定公開にしても、リンク先の GitHub Pages 自体が公開URLであれば完全なアクセス制限にはならない。
 
-現時点の PDF Utility には患者情報、院内サーバー接続、認証情報、APIキー、Google Drive連携を含めない。
+現時点の PDF Utility には個人情報、内部サーバー接続、認証情報、APIキー、Google Drive連携を含めない。
 
 ## 受け入れ条件
 
@@ -48,5 +48,5 @@ Google Sites にリンク
 - GitHub Actions で Pages deploy が成功する。
 - `https://chopper0618.github.io/PDF-Utility/` でアプリが開く。
 - Google Sites からリンクで起動できる。
-- 院内PCの Chrome / Edge で基本操作が動く。
+- 実際に利用する PC 環境の Chrome / Edge で基本操作が動く。
 - PDF読み込み、Page Map、プレビュー、PDF作成が動く。

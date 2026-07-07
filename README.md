@@ -1,11 +1,11 @@
 # PDF Utility
 
-A modern PDF editing utility designed to make everyday PDF work in hospitals faster, simpler, and safer.
+A modern PDF editing utility designed to make everyday PDF page work faster, simpler, and safer.
 
 ## Status
 
 Current version: `v1.0.0-beta`
-Current sprint: `Sprint 1.0.0 release preparation`
+Current sprint: `Sprint 1.0.2 neutral wording cleanup`
 Main branch: `main`
 Development branch: `develop`
 
@@ -67,7 +67,7 @@ Safety notes:
 - PDF files are processed in the browser.
 - The app does not provide Google Drive integration.
 - The app does not use authentication, OAuth, API keys, or server-side storage.
-- The GitHub Pages URL is public. Handle PDFs containing patient information according to hospital and department rules.
+- The GitHub Pages URL is public. Handle PDFs containing personal information according to your organization's information management rules.
 - After exporting, open the saved PDF in a separate viewer when confirmation is required.
 
 For release checks and known limitations, see:

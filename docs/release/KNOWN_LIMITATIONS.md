@@ -1,7 +1,7 @@
 # KNOWN_LIMITATIONS
 
 > Target: `1.0.0-beta`
-> Purpose: 部門内試用前に、できること・できないこと・注意点を明確にする。
+> Purpose: 試用前に、できること・できないこと・注意点を明確にする。
 
 ---
 
@@ -37,7 +37,7 @@ Out of scope for 1.0.0-beta:
 
 ---
 
-## 2. Privacy / patient information
+## 2. Privacy / personal information
 
 PDF Utility は GitHub Pages で公開されるブラウザアプリとして提供する。
 
@@ -50,7 +50,7 @@ PDF Utility は GitHub Pages で公開されるブラウザアプリとして提
 
 ただし、GitHub Pages の URL 自体は公開 URL である。
 
-患者情報を含む PDF を扱う場合は、必ず院内ルール・部署ルールに従うこと。
+個人情報を含む PDF を保存・共有する際は、必ず所属先の情報管理ルールに従うこと。
 
 ---
 
@@ -70,7 +70,7 @@ Not primary target for 1.0.0-beta:
 
 Reason:
 
-院内 PC での実用確認を優先するため。
+実際に利用する PC 環境での確認を優先するため。
 
 ---
 
@@ -123,7 +123,7 @@ Not guaranteed in 1.0.0-beta:
 - 並び替え
 - 書き出し
 
-1.0.0-beta では、まず日常的な部門内利用サイズを優先して確認する。
+1.0.0-beta では、まず日常的な利用サイズを優先して確認する。
 
 ---
 
@@ -168,4 +168,4 @@ After 1.0.0-beta trial:
 - パスワード付き PDF の検出表示
 - 大量ページ時のパフォーマンス確認
 - 試用者向けの簡易操作説明
-- 部門内フィードバックを Issue 化
+- 試用フィードバックを Issue 化

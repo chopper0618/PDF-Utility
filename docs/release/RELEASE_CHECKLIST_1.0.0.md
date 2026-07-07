@@ -1,13 +1,13 @@
 # RELEASE_CHECKLIST_1.0.0
 
 > Target: `1.0.0-beta`
-> Purpose: 部門内で試用できる beta 相当として、現状機能・公開経路・安全面を確認する。
+> Purpose: 試用できる beta 相当として、現状機能・公開経路・安全面を確認する。
 
 ---
 
 ## 1. Release scope
 
-このチェックリストは、PDF Utility を **病院の放射線部門内で試用する前の確認** に使う。
+このチェックリストは、PDF Utility を **業務環境で試用する前の確認** に使う。
 
 1.0.0-beta では、Adobe Acrobat の代替ではなく、次のページ編集作業を軽く・分かりやすく行える状態を目標とする。
 
@@ -47,7 +47,7 @@
 
 Notes:
 
-- 院内 PC で実際に確認する。
+- 実際に利用する PC 環境で確認する。
 - Safari / Firefox は 1.0.0-beta の主対象外。必要になった時点で追加検証する。
 
 ---
@@ -101,7 +101,7 @@ Notes:
 
 | Check | Expected result | Result |
 |---|---|---|
-| 患者情報を含む PDF の注意表示 | README / Google Sites の説明で注意喚起されている | [ ] |
+| 個人情報を含む PDF の注意表示 | README / Google Sites の説明で注意喚起されている | [ ] |
 | ブラウザ内処理の説明 | PDF はブラウザ内で処理される旨を明記している | [ ] |
 | サーバー保存なし | アプリ側で PDF をサーバーへ保存しない | [ ] |
 | Google Drive 連携なし | Drive へ自動保存・自動アップロードしない | [ ] |
@@ -111,7 +111,7 @@ Notes:
 Important:
 
 - PDF Utility は公開 GitHub Pages 上に配置される。
-- 患者情報を含む PDF を扱う場合は、院内ルールに従う。
+- 個人情報を含む PDF を保存・共有する際は、所属先の情報管理ルールに従う。
 - 現時点では Google Drive 連携を行わない。
 - 認証情報や API キーをリポジトリへ入れない。
 
@@ -128,7 +128,7 @@ docs/release/KNOWN_LIMITATIONS.md
 Confirm:
 
 - [ ] 制限事項を理解した
-- [ ] 部門内試用として問題ない範囲である
+- [ ] 試用として問題ない範囲である
 - [ ] 不具合・要望は Issue / Sprint 駆動で扱う
 
 ---
