@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.0.1-beta - Sprint 1.0.1 version display sync
+
+### Added
+
+- Added Issue #27 and Sprint 1.0.1 docs for app version display consistency before beta trial use.
+
+### Fixed
+
+- Updated the app header version display from `v0.8.5-alpha` to `v1.0.0-beta` so it matches `package.json`.
+
 ## v1.0.0-beta - Sprint 1.0.0 release preparation
 
 ### Added

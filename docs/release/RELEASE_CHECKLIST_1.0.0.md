@@ -29,6 +29,7 @@
 | Check | Expected result | Result |
 |---|---|---|
 | GitHub Pages で開ける | `https://chopper0618.github.io/PDF-Utility/` が表示される | [ ] |
+| アプリのバージョン表示 | 画面左上に `v1.0.0-beta` と表示される | [ ] |
 | GitHub Pages の Source | Settings → Pages → Source が `GitHub Actions` | [ ] |
 | Google Sites のリンクから開ける | Google Sites のボタンまたはリンクから別タブで開ける | [ ] |
 | iframe 埋め込みをしていない | PDF 編集は GitHub Pages を直接開いて実行する | [ ] |
@@ -141,6 +142,7 @@ Confirm:
 | Safety notes are documented | [ ] |
 | Known limitations are acceptable for trial use | [ ] |
 | Version is set to `1.0.0-beta` | [ ] |
+| App header displays `v1.0.0-beta` | [ ] |
 
 Release decision:
 

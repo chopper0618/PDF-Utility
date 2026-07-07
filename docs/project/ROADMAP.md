@@ -24,8 +24,9 @@ v1.0 は、PDF の読み込み、ページ単位の整理、複数 PDF の結合
 | Sprint 0.8.4 | Preview keyboard navigation | 完了 |
 | Sprint 0.8.5 | Preview UI polish | 完了 |
 | Sprint 0.9.0 | GitHub Pages trial deployment | 完了 |
-| Sprint 1.0.0 | Release check / beta preparation | 進行中 |
-| Sprint 1.0.1 | Trial feedback fixes | 候補 |
+| Sprint 1.0.0 | Release check / beta preparation | 完了 |
+| Sprint 1.0.1 | Version display sync / beta polish | 進行中 |
+| Sprint 1.0.2 | Trial feedback fixes | 候補 |
 | Sprint 1.1.0 | Export error handling | 候補 |
 
 ---
@@ -72,7 +73,7 @@ v1.0 は、PDF の読み込み、ページ単位の整理、複数 PDF の結合
 
 ## Sprint 1.0.0: Release check / beta preparation
 
-進行中。
+完了。
 
 目的:
 
@@ -99,7 +100,30 @@ Non-scope:
 
 ---
 
-## Sprint 1.0.1: Trial feedback fixes
+## Sprint 1.0.1: Version display sync / beta polish
+
+進行中。
+
+目的:
+
+1.0.0-beta 試用開始前に、アプリ左上のバージョン表示を `v1.0.0-beta` にそろえる。
+
+Scope:
+
+- `src/core/state.js` の `appState.version` を `1.0.0-beta` へ更新
+- リリースチェックリストへアプリ表示バージョン確認を追加
+- Issue #27 / Sprint 1.0.1 docs を追加
+
+Non-scope:
+
+- 機能追加
+- ページ操作ロジック変更
+- `dist` 配下の手動編集
+- `package.json` からの version 自動注入設計
+
+---
+
+## Sprint 1.0.2: Trial feedback fixes
 
 候補。
 
@@ -141,6 +165,7 @@ Non-scope:
 - README に公開 URL と試用時の注意がある
 - 既知の制限事項が docs に明記されている
 - Google Drive 連携なし、認証情報・API キーなしの方針が明記されている
+- アプリ左上の表示が `v1.0.0-beta` になっている
 
 ## v1.0 正式版に向けた判断
 

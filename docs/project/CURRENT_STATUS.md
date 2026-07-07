@@ -2,11 +2,11 @@
 
 ## 現在の状態
 
-現在は **Sprint 1.0.0 準備 / 1.0.0-beta release check** の段階。
+現在は **Sprint 1.0.1 / version display sync and beta polish** の段階。
 
 Sprint 0.7.x で Page Map、ページ移動、削除、Undo / Redo、ファイル名表示を改善した。Sprint 0.8.x では PDF 書き出し、ページ操作後の選択状態、Page Map 並び替え、プレビュー操作を改善した。Sprint 0.9.0 では GitHub Pages による試験公開経路を整え、Google Sites からリンクして院内 PC で動作確認する方針にした。
 
-1.0.0-beta では、機能追加よりも **現状機能の安定化・リリースチェック・制限事項の明文化** を優先する。
+1.0.0-beta では、機能追加よりも **現状機能の安定化・リリースチェック・制限事項の明文化** を優先する。Sprint 1.0.1 では、試用開始前の小修正としてアプリ左上のバージョン表示を `v1.0.0-beta` にそろえる。
 
 ## 公開URL
 
@@ -77,6 +77,8 @@ Google Sites には iframe 埋め込みではなく、GitHub Pages URL へのリ
 - `docs/release/KNOWN_LIMITATIONS.md`
 - `docs/release/GOOGLE_SITES_LISTING.md`
 - `docs/release/CHANGELOG.md`
+- `docs/issue/ISSUE_27_VERSION_DISPLAY_SYNC.md`
+- `docs/sprint/SPRINT_1.0.1.md`
 
 ## 現時点では不要なもの
 
@@ -106,12 +108,13 @@ Google Sites には iframe 埋め込みではなく、GitHub Pages URL へのリ
 | Sprint | テーマ | 判断 |
 |---|---|---|
 | Sprint 0.9.0 | GitHub Pages trial deployment | 完了 |
-| Sprint 1.0.0 | Release check / beta preparation | 進行中 |
-| Sprint 1.0.1 | Trial feedback fixes | 候補 |
+| Sprint 1.0.0 | Release check / beta preparation | 完了 |
+| Sprint 1.0.1 | Version display sync / beta polish | 進行中 |
+| Sprint 1.0.2 | Trial feedback fixes | 候補 |
 | Sprint 1.1.0 | Export error handling | 候補 |
 
 ## Technical Lead 判断
 
-0.8.x でページ操作とプレビュー UX は部門内試用できる水準に近づいた。0.9.0 で公開経路も確認できたため、次は機能追加に進まず、1.0.0-beta として **チェックリスト、制限事項、公開URL、Google Sites 掲載文、安全面の説明** を揃える。
+0.8.x でページ操作とプレビュー UX は部門内試用できる水準に近づいた。0.9.0 で公開経路も確認できたため、次は機能追加に進まず、1.0.0-beta として **チェックリスト、制限事項、公開URL、Google Sites 掲載文、安全面の説明** を揃える。さらに、試用前に画面上のバージョン表示も `v1.0.0-beta` にそろえ、利用者に古い版と誤解されない状態にする。
 
 Google Drive 連携や認証機能は、現時点では入れない。公開 GitHub Pages で扱う以上、患者情報・院内情報・認証情報を含めない運用を明文化し、部門内の試用は院内ルールに従って行う。
