@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.9.0-alpha - Sprint 0.9.0 / Issue #26
+
+### Added
+
+- GitHub Pages deployment workflow using GitHub Actions.
+- Deployment architecture documentation for GitHub Pages and Google Sites link usage.
+- Issue and sprint docs for GitHub Pages trial deployment.
+
+### Changed
+
+- Set Vite `base` to `/PDF-Utility/` for repository-path GitHub Pages deployment.
+- Updated project status from preview UI polish to deployment trial.
+
+
 ## v0.8.5-alpha - Sprint 0.8.5 / Issue #25
 
 ### Added

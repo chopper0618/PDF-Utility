@@ -1,3 +1,16 @@
+## 0.9.0-alpha - Sprint 0.9.0 / Issue #26
+
+Added:
+
+- GitHub Pages deploy workflow using GitHub Actions.
+- Deployment architecture docs for GitHub Pages and Google Sites link usage.
+- Sprint and issue docs for trial deployment.
+
+Changed:
+
+- Vite `base` is set to `/PDF-Utility/` for GitHub Pages repository-path deployment.
+- Roadmap now treats Google Drive integration as out of scope for the current trial deployment.
+
 ## 0.8.5-alpha - Sprint 0.8.5 / Issue #25
 
 Added:
