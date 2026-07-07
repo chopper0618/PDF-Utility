@@ -1,6 +1,18 @@
 # Changelog
 
-## Unreleased - Sprint 1.0.2 neutral wording cleanup
+## Unreleased - Sprint 1.0.3 browser compatibility notes
+
+### Added
+
+- Added Issue #29 and Sprint 1.0.3 docs for browser compatibility notes.
+- Documented Safari save limitations in known limitations, release checklist, and Google Sites listing copy.
+
+### Changed
+
+- Clarified Chrome as the recommended browser for trial use.
+- Kept save behavior unchanged and documented Safari as conditional support instead of attempting another save-dialog implementation.
+
+## v1.0.2-beta - Sprint 1.0.2 neutral wording cleanup
 
 ### Added
 

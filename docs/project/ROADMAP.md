@@ -26,8 +26,8 @@ v1.0 は、PDF の読み込み、ページ単位の整理、複数 PDF の結合
 | Sprint 0.9.0 | GitHub Pages trial deployment | 完了 |
 | Sprint 1.0.0 | Release check / beta preparation | 完了 |
 | Sprint 1.0.1 | Version display sync / beta polish | 完了 |
-| Sprint 1.0.2 | Neutral wording cleanup | 進行中 |
-| Sprint 1.0.3 | Trial feedback fixes | 候補 |
+| Sprint 1.0.2 | Neutral wording cleanup | 完了 |
+| Sprint 1.0.3 | Browser compatibility notes | 進行中 |
 | Sprint 1.1.0 | Export error handling | 候補 |
 
 ---
@@ -126,7 +126,7 @@ Non-scope:
 
 ## Sprint 1.0.2: Neutral wording cleanup
 
-進行中。
+完了。
 
 目的:
 
@@ -202,3 +202,29 @@ Non-scope:
 - 保存後 PDF のページ順・回転・削除・複製が期待通り
 - エラー時の説明が不足している箇所が把握できている
 - 個人情報を含む PDF の保存・共有時の注意が運用上問題ない
+
+
+---
+
+## Sprint 1.0.3: Browser compatibility notes
+
+進行中。
+
+目的:
+
+1.0.0-beta の試用前に、Safari での保存挙動を既知の制限として明文化する。保存処理は安定性を優先して現状維持とし、ブラウザごとの違いを説明で吸収する。
+
+Scope:
+
+- `KNOWN_LIMITATIONS` に Safari の保存制限を追記
+- `RELEASE_CHECKLIST_1.0.0` に Safari の条件付き確認項目を追加
+- Google Sites 掲載文に推奨ブラウザと Safari 注意を追記
+- Chrome を推奨ブラウザとして明記
+- Edge は利用環境がある場合に確認する扱いへ整理
+
+Non-scope:
+
+- 保存処理の再実装
+- Safari での保存先選択をアプリ側で再現すること
+- 独自保存ダイアログの追加
+- Google Drive 連携

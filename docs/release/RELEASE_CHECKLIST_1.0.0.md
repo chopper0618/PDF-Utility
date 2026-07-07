@@ -44,11 +44,15 @@
 |---|---|---|
 | Google Chrome | 読み込み、ページ操作、保存ができる | [ ] |
 | Microsoft Edge | 読み込み、ページ操作、保存ができる | [ ] |
+| Safari | 読み込み、ページ操作、保存ができる。ただし保存名・保存先指定には制限がある | [ ] |
 
 Notes:
 
 - 実際に利用する PC 環境で確認する。
-- Safari / Firefox は 1.0.0-beta の主対象外。必要になった時点で追加検証する。
+- 推奨ブラウザは Chrome とする。
+- Edge は利用環境がある場合に確認する。
+- Safari は条件付き対応とし、保存された PDF はブラウザまたは OS のダウンロード設定に従う。
+- Firefox / Mobile browsers / Tablet browsers は 1.0.0-beta の主対象外。必要になった時点で追加検証する。
 
 ---
 
@@ -58,7 +62,8 @@ Notes:
 |---|---|---|
 | PDF を読み込める | PDF 追加後、サムネイルが表示される | [ ] |
 | 複数 PDF を読み込める | 読み込んだ順にページが追加される | [ ] |
-| PDF を保存できる | OS 標準の保存ダイアログで PDF を保存できる | [ ] |
+| PDF を保存できる | Chrome では保存ダイアログで PDF を保存できる | [ ] |
+| Safari で PDF を保存できる | Safari ではブラウザまたは OS のダウンロード設定に従って保存される | [ ] |
 | 保存後 PDF を開ける | 保存した PDF が別ビューアで開ける | [ ] |
 | 保存後のページ順が正しい | 画面上のページ順と保存 PDF のページ順が一致する | [ ] |
 
@@ -141,6 +146,7 @@ Confirm:
 | Chrome / Edge check completed | [ ] |
 | Safety notes are documented | [ ] |
 | Known limitations are acceptable for trial use | [ ] |
+| Safari save limitation is documented | [ ] |
 | Version is set to `1.0.0-beta` | [ ] |
 | App header displays `v1.0.0-beta` | [ ] |
 

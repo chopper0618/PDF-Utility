@@ -2,11 +2,11 @@
 
 ## 現在の状態
 
-現在は **Sprint 1.0.2 / neutral wording cleanup** の段階。
+現在は **Sprint 1.0.3 / browser compatibility notes** の段階。
 
 Sprint 0.7.x で Page Map、ページ移動、削除、Undo / Redo、ファイル名表示を改善した。Sprint 0.8.x では PDF 書き出し、ページ操作後の選択状態、Page Map 並び替え、プレビュー操作を改善した。Sprint 0.9.0 では GitHub Pages による試験公開経路を整え、Google Sites からリンクして実際に利用する PC 環境で動作確認する方針にした。
 
-1.0.0-beta では、機能追加よりも **現状機能の安定化・リリースチェック・制限事項の明文化** を優先する。Sprint 1.0.1 でアプリ左上のバージョン表示を `v1.0.0-beta` にそろえた。Sprint 1.0.2 では、公開リポジトリと Google Sites 掲載文が特定の利用環境に見えないよう、表現を汎用的に整理する。
+1.0.0-beta では、機能追加よりも **現状機能の安定化・リリースチェック・制限事項の明文化** を優先する。Sprint 1.0.1 でアプリ左上のバージョン表示を `v1.0.0-beta` にそろえた。Sprint 1.0.2 では、公開リポジトリと Google Sites 掲載文が特定の利用環境に見えないよう、表現を汎用的に整理した。Sprint 1.0.3 では、Safari の保存制限を既知の制限として明文化し、保存処理は現状維持とする。
 
 ## 公開URL
 
@@ -58,7 +58,9 @@ Google Sites には iframe 埋め込みではなく、GitHub Pages URL へのリ
 
 - GitHub Pages で開ける
 - Google Sites のリンクから開ける
-- Chrome / Edge で動作する
+- Chrome で動作する
+- Edge は利用環境がある場合に確認する
+- Safari は保存時のファイル名・保存先指定に制限があることを理解する
 - PDF を読み込める
 - PDF を保存できる
 - ページ並び替えができる
@@ -81,6 +83,8 @@ Google Sites には iframe 埋め込みではなく、GitHub Pages URL へのリ
 - `docs/sprint/SPRINT_1.0.1.md`
 - `docs/issue/ISSUE_28_NEUTRAL_WORDING_CLEANUP.md`
 - `docs/sprint/SPRINT_1.0.2.md`
+- `docs/issue/ISSUE_29_BROWSER_COMPATIBILITY_NOTES.md`
+- `docs/sprint/SPRINT_1.0.3.md`
 
 ## 現時点では不要なもの
 
@@ -100,7 +104,9 @@ Google Sites には iframe 埋め込みではなく、GitHub Pages URL へのリ
 
 ### 2. 試用後フィードバック
 
-- 実際に利用する PC 環境での Chrome / Edge 動作確認
+- 実際に利用する PC 環境での Chrome 動作確認
+- Edge の利用環境がある場合の動作確認
+- Safari での保存制限に対する説明の分かりやすさ確認
 - 日常的なページ数・ファイルサイズでの速度確認
 - 操作説明が不足している箇所の洗い出し
 - 試用者からの不具合・要望の Issue 化
@@ -112,12 +118,12 @@ Google Sites には iframe 埋め込みではなく、GitHub Pages URL へのリ
 | Sprint 0.9.0 | GitHub Pages trial deployment | 完了 |
 | Sprint 1.0.0 | Release check / beta preparation | 完了 |
 | Sprint 1.0.1 | Version display sync / beta polish | 完了 |
-| Sprint 1.0.2 | Neutral wording cleanup | 進行中 |
-| Sprint 1.0.3 | Trial feedback fixes | 候補 |
+| Sprint 1.0.2 | Neutral wording cleanup | 完了 |
+| Sprint 1.0.3 | Browser compatibility notes | 進行中 |
 | Sprint 1.1.0 | Export error handling | 候補 |
 
 ## Technical Lead 判断
 
-0.8.x でページ操作とプレビュー UX は試用できる水準に近づいた。0.9.0 で公開経路も確認でき、1.0.0-beta のチェックリスト、制限事項、公開URL、Google Sites 掲載文、安全面の説明も揃った。Sprint 1.0.2 では、公開リポジトリとして特定の利用環境に見えないよう表現を整理し、PDF Utility を汎用的な PDF ページ編集ツールとして説明する。
+0.8.x でページ操作とプレビュー UX は試用できる水準に近づいた。0.9.0 で公開経路も確認でき、1.0.0-beta のチェックリスト、制限事項、公開URL、Google Sites 掲載文、安全面の説明も揃った。Sprint 1.0.2 では、公開リポジトリとして特定の利用環境に見えないよう表現を整理し、PDF Utility を汎用的な PDF ページ編集ツールとして説明した。Sprint 1.0.3 では、保存機能を作り替えず、Safari では保存先やファイル名指定に制限があることを Docs と Google Sites 掲載文で明文化する。
 
 Google Drive 連携や認証機能は、現時点では入れない。公開 GitHub Pages で扱う以上、個人情報・内部情報・認証情報を含めない運用を明文化し、試用は所属先の情報管理ルールに従って行う。

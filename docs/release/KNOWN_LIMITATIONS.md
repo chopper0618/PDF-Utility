@@ -56,21 +56,29 @@ PDF Utility は GitHub Pages で公開されるブラウザアプリとして提
 
 ## 3. Browser support
 
-Primary target:
+Recommended target:
 
 - Google Chrome
+
+Expected compatible target:
+
 - Microsoft Edge
+
+Conditional support:
+
+- Safari
 
 Not primary target for 1.0.0-beta:
 
-- Safari
 - Firefox
 - Mobile browsers
 - Tablet browsers
 
-Reason:
+Notes:
 
-実際に利用する PC 環境での確認を優先するため。
+- 実際に利用する PC 環境での確認を優先する。
+- Safari では、PDF 保存時にファイル名や保存先をアプリ側から指定できない場合がある。
+- Safari で保存した PDF は、ブラウザまたは OS のダウンロード設定に従って保存される。必要に応じて、保存後に Finder 等でファイル名や保存場所を変更する。
 
 ---
 
@@ -92,6 +100,8 @@ The following files may fail to load or export correctly:
 ## 5. Export limitations
 
 PDF export is intended to preserve page order and page-level operations.
+
+保存時のファイル名・保存先指定はブラウザの機能に依存する。Chrome では保存ダイアログで指定できることを確認対象とする。Safari では通常のダウンロード保存になり、ファイル名や保存先を指定できない場合がある。
 
 Expected:
 
@@ -163,6 +173,8 @@ Reason:
 
 After 1.0.0-beta trial:
 
+- Edge での保存動作確認
+- Safari 向け保存メッセージ改善の要否判断
 - 読み込み失敗時のエラーメッセージ改善
 - 保存失敗時のエラーメッセージ改善
 - パスワード付き PDF の検出表示
