@@ -4,8 +4,8 @@ A modern PDF editing utility designed to make everyday PDF work in hospitals fas
 
 ## Status
 
-Current version: `v0.9.0-alpha`
-Current sprint: `Sprint 0.9.0 GitHub Pages trial deployment`
+Current version: `v1.0.0-beta`
+Current sprint: `Sprint 1.0.0 release preparation`
 Main branch: `main`
 Development branch: `develop`
 
@@ -46,9 +46,9 @@ Planned:
 - Watermark
 - Deployment hardening
 
-## Trial deployment
+## Public trial URL
 
-GitHub Pages trial URL:
+GitHub Pages URL:
 
 ```text
 https://chopper0618.github.io/PDF-Utility/
@@ -57,6 +57,24 @@ https://chopper0618.github.io/PDF-Utility/
 Deployment is handled by GitHub Actions. In GitHub, set Settings → Pages → Source to `GitHub Actions`, then push to `main`.
 
 Google Sites should link to the GitHub Pages URL rather than iframe-embed the app, so PDF editing can use a full browser window.
+
+## Trial use notes
+
+PDF Utility is intended for page-level PDF editing in the browser. For the 1.0.0-beta trial, use Google Chrome or Microsoft Edge.
+
+Safety notes:
+
+- PDF files are processed in the browser.
+- The app does not provide Google Drive integration.
+- The app does not use authentication, OAuth, API keys, or server-side storage.
+- The GitHub Pages URL is public. Handle PDFs containing patient information according to hospital and department rules.
+- After exporting, open the saved PDF in a separate viewer when confirmation is required.
+
+For release checks and known limitations, see:
+
+- `docs/release/RELEASE_CHECKLIST_1.0.0.md`
+- `docs/release/KNOWN_LIMITATIONS.md`
+- `docs/release/GOOGLE_SITES_LISTING.md`
 
 
 ## Development

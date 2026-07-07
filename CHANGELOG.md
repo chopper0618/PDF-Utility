@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.0.0-beta - Sprint 1.0.0 release preparation
+
+### Added
+
+- Added a 1.0.0-beta release checklist for deployment, browser, page operation, preview, export, and safety checks.
+- Added known limitations for browser support, file support, export behavior, privacy, performance, and Google Drive non-integration.
+- Added Google Sites listing copy for the department trial link.
+
+### Changed
+
+- Updated README with the public GitHub Pages URL and trial-use safety notes.
+- Updated project status and roadmap for the 1.0.0-beta release-check phase.
+- Updated package metadata from `0.9.0-alpha` to `1.0.0-beta`.
+
 ## v0.9.0-alpha - Sprint 0.9.0 / Issue #26
 
 ### Added
