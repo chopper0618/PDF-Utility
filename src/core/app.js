@@ -5,6 +5,10 @@ import { loadPdfFile } from '../pdf/loader.js';
 import { renderPageThumbnail } from '../pdf/thumbnail.js';
 import { createMergedPdfBlob, downloadBlob, getSuggestedOutputFileName } from '../pdf/export.js';
 
+// Render previews at a higher resolution than thumbnails so zoomed text and lines stay readable.
+// Keep this capped to the active preview page only; thumbnails remain lightweight.
+const PREVIEW_RENDER_WIDTH = 2200;
+
 function createId(prefix) {
   return `${prefix}-${crypto.randomUUID()}`;
 }
@@ -517,7 +521,7 @@ export function createApp(root) {
     try {
       const file = context.state.files.find((item) => item.id === page.fileId);
       if (!file?.pdfDocument) throw new Error('元PDFが見つかりません。');
-      const preview = await renderPageThumbnail(file.pdfDocument, page.originalPageNumber, 1100, page.rotation);
+      const preview = await renderPageThumbnail(file.pdfDocument, page.originalPageNumber, PREVIEW_RENDER_WIDTH, page.rotation);
 
       if (context.state.previewPageId !== pageId) return;
       context.state.previewImageUrl = preview.dataUrl;

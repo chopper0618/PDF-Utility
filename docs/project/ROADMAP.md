@@ -27,7 +27,8 @@ v1.0 は、PDF の読み込み、ページ単位の整理、複数 PDF の結合
 | Sprint 1.0.0 | Release check / beta preparation | 完了 |
 | Sprint 1.0.1 | Version display sync / beta polish | 完了 |
 | Sprint 1.0.2 | Neutral wording cleanup | 完了 |
-| Sprint 1.0.3 | Browser compatibility notes | 進行中 |
+| Sprint 1.0.3 | Browser compatibility notes | 完了 |
+| Sprint 1.0.4 | Preview render quality improvement | 進行中 |
 | Sprint 1.1.0 | Export error handling | 候補 |
 
 ---
@@ -208,7 +209,7 @@ Non-scope:
 
 ## Sprint 1.0.3: Browser compatibility notes
 
-進行中。
+完了。
 
 目的:
 
@@ -228,3 +229,20 @@ Non-scope:
 - Safari での保存先選択をアプリ側で再現すること
 - 独自保存ダイアログの追加
 - Google Drive 連携
+
+---
+
+## Sprint 1.0.4: Preview render quality improvement
+
+進行中。
+
+目的:
+
+- プレビューで拡大したときの文字や罫線のボケを軽減する。
+- サムネール生成は変更せず、通常操作の軽さを維持する。
+
+方針:
+
+- プレビュー表示中の1ページだけを従来より高解像度で生成する。
+- PDFビューア全体の作り直しや、全ページの高解像度事前生成は行わない。
+- 大きな機能追加ではなく、既存プレビューの品質改善として扱う。

@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased - Sprint 1.0.4 preview render quality
+
+### Changed
+
+- Improved preview overlay image quality by rendering the active preview page at a higher resolution.
+- Kept thumbnails unchanged so normal page-grid performance remains lightweight.
+
 ## Unreleased - Sprint 1.0.3 browser compatibility notes
 
 ### Added

@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased - Sprint 1.0.4 preview render quality
+
+### Added
+
+- Added Issue #30 and Sprint 1.0.4 docs for preview render quality improvement.
+
+### Changed
+
+- Increased the preview overlay render width so zoomed text and table lines are less blurry.
+- Kept thumbnail rendering unchanged to avoid slowing down the main page grid.
+
 ## Unreleased - Sprint 1.0.3 browser compatibility notes
 
 ### Added
