@@ -31,7 +31,7 @@
 | GitHub Pages で開ける | `https://chopper0618.github.io/PDF-Utility/` が表示される | [ ] |
 | アプリのバージョン表示 | 画面左上に `v1.0.0-beta` と表示される | [ ] |
 | GitHub Pages の Source | Settings → Pages → Source が `GitHub Actions` | [ ] |
-| Google Sites のリンクから開ける | Google Sites のボタンまたはリンクから別タブで開ける | [ ] |
+| Google Sites のリンクから開ける | Google Sites のボタンまたはリンクから別タブで開ける | [x] |
 | iframe 埋め込みをしていない | PDF 編集は GitHub Pages を直接開いて実行する | [ ] |
 | API キーが含まれていない | リポジトリ・公開ページ・設定に API キーや認証情報がない | [ ] |
 | Google Drive 連携がない | Drive 認証・Drive API・OAuth 設定を使用していない | [ ] |
@@ -42,9 +42,9 @@
 
 | Browser | Expected result | Result |
 |---|---|---|
-| Google Chrome | 読み込み、ページ操作、保存ができる | [ ] |
-| Microsoft Edge | 読み込み、ページ操作、保存ができる | [ ] |
-| Safari | 読み込み、ページ操作、保存ができる。ただし保存名・保存先指定には制限がある | [ ] |
+| Google Chrome | 読み込み、ページ操作、保存ができる | [x] |
+| Microsoft Edge | 読み込み、ページ操作、保存ができる | [ ] 未確認 |
+| Safari | 読み込み、ページ操作、保存ができる。ただし保存名・保存先指定には制限がある | [x] 条件付き |
 
 Notes:
 
@@ -60,11 +60,11 @@ Notes:
 
 | Check | Expected result | Result |
 |---|---|---|
-| PDF を読み込める | PDF 追加後、サムネイルが表示される | [ ] |
+| PDF を読み込める | PDF 追加後、サムネイルが表示される | [x] |
 | 複数 PDF を読み込める | 読み込んだ順にページが追加される | [ ] |
-| PDF を保存できる | Chrome では保存ダイアログで PDF を保存できる | [ ] |
+| PDF を保存できる | Chrome では保存ダイアログで PDF を保存できる | [x] |
 | Safari で PDF を保存できる | Safari ではブラウザまたは OS のダウンロード設定に従って保存される | [ ] |
-| 保存後 PDF を開ける | 保存した PDF が別ビューアで開ける | [ ] |
+| 保存後 PDF を開ける | 保存した PDF が別ビューアで開ける | [x] |
 | 保存後のページ順が正しい | 画面上のページ順と保存 PDF のページ順が一致する | [ ] |
 
 ---
@@ -93,16 +93,31 @@ Notes:
 | Page Map | 現在のページ順を確認できる | [ ] |
 | Page Map クリック | 該当ページへジャンプできる | [ ] |
 | サムネイル | 各ページの見た目を確認できる | [ ] |
-| プレビュー | サムネイルのダブルクリックで拡大表示できる | [ ] |
+| プレビュー | サムネイルのダブルクリックで拡大表示できる | [x] |
 | 幅フィット | プレビューを幅に合わせられる | [ ] |
 | 高さフィット | プレビューを高さに合わせられる | [ ] |
-| 拡大縮小 | プレビュー内で拡大・縮小できる | [ ] |
+| 拡大縮小 | プレビュー内で拡大・縮小できる | [x] |
 | 前後ページ移動 | プレビュー内で前後ページに移動できる | [ ] |
 | キーボード操作 | プレビュー中の左右キー移動ができる | [ ] |
 
 ---
 
-## 7. Safety / privacy check
+## 7. Performance / large file check
+
+| Check | Expected result | Result |
+|---|---|---|
+| サムネイル表示 | 通常操作上、重さが大きく増えていない | [x] |
+| プレビュー高画質化 | 拡大時の文字・罫線が以前より読みやすい | [x] |
+| 400ページ超え PDF | プレビュー確認ができる | [x] |
+
+Notes:
+
+- 大量ページ PDF の速度は、PDF の内容、画像解像度、ファイルサイズ、利用端末の性能によって変わる。
+- 400ページ超え PDF でプレビュー確認済みだが、すべての大容量 PDF を保証するものではない。
+
+---
+
+## 8. Safety / privacy check
 
 | Check | Expected result | Result |
 |---|---|---|
@@ -122,7 +137,7 @@ Important:
 
 ---
 
-## 8. Known limitation review
+## 9. Known limitation review
 
 Before trial use, read:
 
@@ -138,21 +153,22 @@ Confirm:
 
 ---
 
-## 9. Release decision
+## 10. Release decision
 
 | Item | Result |
 |---|---|
 | Basic workflow is usable | [ ] |
-| Chrome / Edge check completed | [ ] |
+| Chrome check completed | [x] |
+| Edge check completed if environment is available | [ ] 未確認 |
 | Safety notes are documented | [ ] |
 | Known limitations are acceptable for trial use | [ ] |
-| Safari save limitation is documented | [ ] |
-| Version is set to `1.0.0-beta` | [ ] |
-| App header displays `v1.0.0-beta` | [ ] |
+| Safari save limitation is documented | [x] |
+| Version is set to `1.0.0-beta` | [x] |
+| App header displays `v1.0.0-beta` | [x] |
 
 Release decision:
 
-- [ ] Release as `1.0.0-beta`
+- [x] Release as `1.0.0-beta` / Ready for trial
 - [ ] Hold release and create follow-up issues
 
 Reviewer notes:

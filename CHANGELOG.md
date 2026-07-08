@@ -1,6 +1,18 @@
 # Changelog
 
-## Unreleased - Sprint 1.0.4 preview render quality
+## Unreleased - Sprint 1.0.5 trial validation notes
+
+### Added
+
+- Added Issue #31 and Sprint 1.0.5 docs for trial validation notes.
+- Documented trial confirmation with Chrome, Google Sites access, PDF loading, preview, export, and a 400+ page PDF preview check.
+
+### Changed
+
+- Updated project status to `Ready for trial` for `1.0.0-beta`.
+- Kept Safari save limitations documented and Edge as an environment-dependent/unconfirmed check.
+
+## v1.0.4-beta - Sprint 1.0.4 preview render quality
 
 ### Added
 

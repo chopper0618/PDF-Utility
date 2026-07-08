@@ -2,11 +2,11 @@
 
 ## 現在の状態
 
-現在は **Sprint 1.0.4 / preview render quality improvement** の段階。
+現在は **Sprint 1.0.5 / trial validation notes** の段階。
 
 Sprint 0.7.x で Page Map、ページ移動、削除、Undo / Redo、ファイル名表示を改善した。Sprint 0.8.x では PDF 書き出し、ページ操作後の選択状態、Page Map 並び替え、プレビュー操作を改善した。Sprint 0.9.0 では GitHub Pages による試験公開経路を整え、Google Sites からリンクして実際に利用する PC 環境で動作確認する方針にした。
 
-1.0.0-beta では、機能追加よりも **現状機能の安定化・リリースチェック・制限事項の明文化** を優先する。Sprint 1.0.1 でアプリ左上のバージョン表示を `v1.0.0-beta` にそろえた。Sprint 1.0.2 では、公開リポジトリと Google Sites 掲載文が特定の利用環境に見えないよう、表現を汎用的に整理した。Sprint 1.0.3 では、Safari の保存制限を既知の制限として明文化し、保存処理は現状維持とした。Sprint 1.0.4 では、プレビュー拡大時の文字・罫線のボケを軽減するため、プレビュー画像だけを高解像度で生成する。
+1.0.0-beta では、機能追加よりも **現状機能の安定化・リリースチェック・制限事項の明文化** を優先する。Sprint 1.0.1 でアプリ左上のバージョン表示を `v1.0.0-beta` にそろえた。Sprint 1.0.2 では、公開リポジトリと Google Sites 掲載文が特定の利用環境に見えないよう、表現を汎用的に整理した。Sprint 1.0.3 では、Safari の保存制限を既知の制限として明文化し、保存処理は現状維持とした。Sprint 1.0.4 では、プレビュー拡大時の文字・罫線のボケを軽減するため、プレビュー画像だけを高解像度で生成した。Sprint 1.0.5 では、400ページ超えPDFを含む試用前確認結果を記録し、`1.0.0-beta` を `Ready for trial` として扱う。
 
 ## 公開URL
 
@@ -55,11 +55,34 @@ Google Sites には iframe 埋め込みではなく、GitHub Pages URL へのリ
 - GitHub Pages 用の Vite base 設定
 - GitHub Actions による Pages deploy workflow
 
+## 1.0.0-beta trial status
+
+**Decision:** `Ready for trial`
+
+確認済み:
+
+- GitHub Pages で開ける
+- Google Sites のリンクから開ける
+- Chrome で動作する
+- PDF を読み込める
+- PDF を保存できる
+- 保存後 PDF を開ける
+- サムネイル表示が通常操作上重くなっていない
+- プレビューを開ける
+- プレビュー拡大時の文字・罫線が改善している
+- 400ページ超え PDF でもプレビュー確認ができる
+
+未確認・条件付き:
+
+- Edge は利用環境がある場合に確認する
+- Safari は保存時のファイル名・保存先指定に制限がある
+
 ## 1.0.0-beta で確認すること
 
 - GitHub Pages で開ける
 - Google Sites のリンクから開ける
 - Chrome で動作する
+- 400ページ超え PDF でもプレビュー確認ができる
 - Edge は利用環境がある場合に確認する
 - Safari は保存時のファイル名・保存先指定に制限があることを理解する
 - PDF を読み込める
@@ -88,6 +111,8 @@ Google Sites には iframe 埋め込みではなく、GitHub Pages URL へのリ
 - `docs/sprint/SPRINT_1.0.3.md`
 - `docs/issue/ISSUE_30_PREVIEW_RENDER_QUALITY.md`
 - `docs/sprint/SPRINT_1.0.4.md`
+- `docs/issue/ISSUE_31_TRIAL_VALIDATION_NOTES.md`
+- `docs/sprint/SPRINT_1.0.5.md`
 
 ## 現時点では不要なもの
 
@@ -107,10 +132,9 @@ Google Sites には iframe 埋め込みではなく、GitHub Pages URL へのリ
 
 ### 2. 試用後フィードバック
 
-- 実際に利用する PC 環境での Chrome 動作確認
 - Edge の利用環境がある場合の動作確認
 - Safari での保存制限に対する説明の分かりやすさ確認
-- 日常的なページ数・ファイルサイズでの速度確認
+- 日常的なページ数・ファイルサイズでの継続的な速度確認
 - 操作説明が不足している箇所の洗い出し
 - 試用者からの不具合・要望の Issue 化
 
@@ -123,11 +147,12 @@ Google Sites には iframe 埋め込みではなく、GitHub Pages URL へのリ
 | Sprint 1.0.1 | Version display sync / beta polish | 完了 |
 | Sprint 1.0.2 | Neutral wording cleanup | 完了 |
 | Sprint 1.0.3 | Browser compatibility notes | 完了 |
-| Sprint 1.0.4 | Preview render quality improvement | 進行中 |
+| Sprint 1.0.4 | Preview render quality improvement | 完了 |
+| Sprint 1.0.5 | Trial validation notes | 完了 |
 | Sprint 1.1.0 | Export error handling | 候補 |
 
 ## Technical Lead 判断
 
-0.8.x でページ操作とプレビュー UX は試用できる水準に近づいた。0.9.0 で公開経路も確認でき、1.0.0-beta のチェックリスト、制限事項、公開URL、Google Sites 掲載文、安全面の説明も揃った。Sprint 1.0.2 では、公開リポジトリとして特定の利用環境に見えないよう表現を整理し、PDF Utility を汎用的な PDF ページ編集ツールとして説明した。Sprint 1.0.3 では、保存機能を作り替えず、Safari では保存先やファイル名指定に制限があることを Docs と Google Sites 掲載文で明文化した。Sprint 1.0.4 では、プレビュー中の1ページだけを高解像度化し、拡大時の視認性改善を小さく検証する。
+0.8.x でページ操作とプレビュー UX は試用できる水準に近づいた。0.9.0 で公開経路も確認でき、1.0.0-beta のチェックリスト、制限事項、公開URL、Google Sites 掲載文、安全面の説明も揃った。Sprint 1.0.2 では、公開リポジトリとして特定の利用環境に見えないよう表現を整理し、PDF Utility を汎用的な PDF ページ編集ツールとして説明した。Sprint 1.0.3 では、保存機能を作り替えず、Safari では保存先やファイル名指定に制限があることを Docs と Google Sites 掲載文で明文化した。Sprint 1.0.4 では、プレビュー中の1ページだけを高解像度化し、拡大時の視認性改善を小さく検証した。Sprint 1.0.5 では、Chrome / Google Sites 経由での利用確認、保存確認、400ページ超えPDFでのプレビュー確認を記録し、1.0.0-beta を試用可能な状態と判断した。
 
 Google Drive 連携や認証機能は、現時点では入れない。公開 GitHub Pages で扱う以上、個人情報・内部情報・認証情報を含めない運用を明文化し、試用は所属先の情報管理ルールに従って行う。

@@ -28,7 +28,8 @@ v1.0 は、PDF の読み込み、ページ単位の整理、複数 PDF の結合
 | Sprint 1.0.1 | Version display sync / beta polish | 完了 |
 | Sprint 1.0.2 | Neutral wording cleanup | 完了 |
 | Sprint 1.0.3 | Browser compatibility notes | 完了 |
-| Sprint 1.0.4 | Preview render quality improvement | 進行中 |
+| Sprint 1.0.4 | Preview render quality improvement | 完了 |
+| Sprint 1.0.5 | Trial validation notes | 完了 |
 | Sprint 1.1.0 | Export error handling | 候補 |
 
 ---
@@ -150,15 +151,34 @@ Non-scope:
 
 ---
 
-## Sprint 1.0.3: Trial feedback fixes
+## Sprint 1.0.3: Browser compatibility notes
 
-候補。
+完了。
 
-- 試用で出た軽微な不具合修正
-- Google Sites 掲載文の調整
-- 操作説明の補強
-- Chrome / Edge での表示差異修正
-- 日常利用で迷いやすい操作の改善
+- Chrome を推奨ブラウザとして明記
+- Safari の保存制限を既知の制限として明文化
+- Edge は利用環境がある場合に確認する扱いへ整理
+- Google Sites 掲載文へブラウザ注意を追記
+
+## Sprint 1.0.4: Preview render quality improvement
+
+完了。
+
+- プレビュー表示中の1ページだけを高解像度で生成
+- 拡大時の文字・罫線のボケを軽減
+- サムネール生成は変更せず、通常操作の軽さを維持
+
+## Sprint 1.0.5: Trial validation notes
+
+完了。
+
+- Chrome での基本操作確認を記録
+- Google Sites リンクから開けることを記録
+- PDF 読み込み、プレビュー、保存、保存後 PDF 表示を記録
+- 400ページ超え PDF でもプレビュー確認できたことを記録
+- Safari の保存制限は既知制限として維持
+- Edge は未確認のまま、利用環境がある場合に確認する扱いを維持
+- 1.0.0-beta を `Ready for trial` として整理
 
 ---
 
@@ -177,9 +197,12 @@ Non-scope:
 
 ## v1.0-beta の完了条件
 
+Status: `Ready for trial`
+
 - GitHub Pages で開ける
 - Google Sites のリンクから開ける
-- Chrome / Edge で動作確認できる
+- Chrome で動作確認できる
+- Edge は利用環境がある場合に確認する
 - PDF を読み込める
 - 複数 PDF を結合できる
 - ページを削除できる
@@ -188,6 +211,7 @@ Non-scope:
 - 回転・複製・指定ページ移動・先頭／末尾移動ができる
 - Undo / Redo が使える
 - サムネイルとプレビューでページ内容を確認できる
+- 400ページ超え PDF でもプレビュー確認ができる
 - 編集後の PDF を保存できる
 - README に公開 URL と試用時の注意がある
 - 既知の制限事項が docs に明記されている
@@ -234,7 +258,7 @@ Non-scope:
 
 ## Sprint 1.0.4: Preview render quality improvement
 
-進行中。
+完了。
 
 目的:
 
